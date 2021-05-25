@@ -17,7 +17,7 @@ const ProductDetails = ({ route, navigation }) => {
 
   return (
     <View>
-      <StatusBar animated={true} hidden={false} backgroundColor="#000000" />
+      <StatusBar animated={true} backgroundColor="#000000" />
       <View>
         <Pressable
           onPress={() => {

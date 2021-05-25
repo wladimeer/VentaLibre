@@ -128,4 +128,54 @@ const CurrentUser = () => {
   });
 };
 
-export default { CreateUser, LoginUser, LogoutUser, CurrentUser };
+const GenerateId = () => {
+  return new Promise((resolve, reject) => {
+    resolve(uid(32));
+  });
+};
+
+const CreateProduct = (product) => {
+  const array = [];
+
+  product.photos.forEach((photo) => {
+    // array.push({
+    //   ['' + uid(32)]: { fecha_creacion: moment().format('DD-MM-YYYY'), url: photo }
+    // });
+    // console.log(photo);
+    // storage()
+    //   .ref('fotos/')
+    //   .child('mifoto')
+    //   .put(photo)
+    //   .then((response) => {
+    //     console.log(response);
+    //   });
+  });
+
+  const path = storage().ref('fotos/').child('mifoto4');
+  path.putString(product.photos[0]).then((response) => {
+    // console.log(response);
+  });
+
+  // path.put(product.photos[0]).then((response) => {
+  // console.log(response);
+  // });
+
+  console.log(path.bucket + path.fullPath);
+
+  // const object = {
+  //   ['' + uid(32)]: {
+  //     nombre: product.name,
+  //     descripcion: product.description,
+  //     fecha_creacion: moment().format('DD-MM-YYYY'),
+  //     cantidad: Number(product.quantity),
+  //     estado: product.state,
+  //     precio: Number(product.price),
+  //     categoria: product.category,
+  //     fotos: array
+  //   }
+  // };
+
+  // console.log(object);
+};
+
+export default { CreateUser, LoginUser, LogoutUser, CurrentUser, CreateProduct };

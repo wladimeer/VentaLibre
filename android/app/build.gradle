@@ -89,7 +89,8 @@ project.ext.vectoricons = [
         'FontAwesome5.ttf',
         'FontAwesome.ttf',
         'Ionicons.ttf',
-        'Feather.ttf'
+        'Feather.ttf',
+        'AntDesign.ttf'
     ]
 ]
 
@@ -196,6 +197,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-file-picker')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"

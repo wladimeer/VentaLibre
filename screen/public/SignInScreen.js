@@ -9,6 +9,8 @@ import * as yup from 'yup';
 const SignInScreen = ({ navigation }) => {
   const [text, setText] = useState('');
 
+  const [state, setState] = useState(false);
+
   const message = useRef(null);
   const warning = useRef(null);
 
@@ -36,6 +38,7 @@ const SignInScreen = ({ navigation }) => {
         .then((response) => {
           setText('Iniciando sesión...');
           message.current.open();
+          setState(true);
 
           setTimeout(() => {
             if (String(response) == 'Vendedor') {
@@ -45,6 +48,7 @@ const SignInScreen = ({ navigation }) => {
             }
 
             message.current.close();
+            setState(false);
             resetForm();
           }, 2000);
         })
@@ -57,7 +61,10 @@ const SignInScreen = ({ navigation }) => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#8E8887' }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: '#8E8887' }}
+      pointerEvents={state ? 'none' : 'auto'}
+    >
       <StatusBar animated={true} backgroundColor={'#000000'} />
 
       <AlertPro

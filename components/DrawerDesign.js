@@ -6,7 +6,7 @@ import Firebase from '../service/Firebase';
 import React from 'react';
 
 const DrawerDesign = (props) => {
-  const { user } = props;
+  const { user, navigation } = props;
 
   return (
     <View>
@@ -29,7 +29,7 @@ const DrawerDesign = (props) => {
           <Text>Ver Productos</Text>
         </Pressable>
 
-        <Pressable onPress={() => console.log('NewProducts')}>
+        <Pressable onPress={() => navigation.navigate('NewProduct')}>
           <Feather name="plus-circle" size={24} color="black" />
           <Text>Nuevo Producto</Text>
         </Pressable>

@@ -58,7 +58,7 @@ const FullScreen = ({ route, navigation }) => {
                 navigation.navigate('ProductDetails');
               }}
             >
-              <Image
+              <Animated.Image
                 source={{ uri: item.url }}
                 style={{
                   width: width - 20,
@@ -66,7 +66,6 @@ const FullScreen = ({ route, navigation }) => {
                   maxWidth: width,
                   borderRadius: 5
                 }}
-                // PlaceholderContent={<ActivityIndicator />}
                 resizeMode={'contain'}
               />
             </Pressable>

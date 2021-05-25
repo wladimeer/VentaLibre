@@ -6310,6 +6310,11 @@
     "react-native-ratings" "^7.3.0"
     "react-native-size-matters" "^0.3.1"
 
+"react-native-file-picker@^0.0.20":
+  "integrity" "sha512-sXexSVMdIMIiIe3y/AH4fIfSYDbXUbN6OzoBThUlVGvOI/Rs4i1xJzNnhnkXIgx97GRPYU4pE8Y0fd0j4+vgSQ=="
+  "resolved" "https://registry.npmjs.org/react-native-file-picker/-/react-native-file-picker-0.0.20.tgz"
+  "version" "0.0.20"
+
 "react-native-gesture-handler@*", "react-native-gesture-handler@^1.10.3", "react-native-gesture-handler@>= 1.0.0":
   "integrity" "sha512-cBGMi1IEsIVMgoox4RvMx7V2r6bNKw0uR1Mu1o7NbuHS6BRSVLq0dP34l2ecnPlC+jpWd3le6Yg1nrdCjby2Mw=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-1.10.3.tgz"

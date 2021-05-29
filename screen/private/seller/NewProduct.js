@@ -1,10 +1,7 @@
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { ScrollView, Pressable, View, Text, TextInput } from 'react-native';
-import React, { useRef, useState } from 'react';
-import AlertPro from 'react-native-alert-pro';
-import Firebase from '../../../service/Firebase';
+import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Image, Card } from 'react-native-elements';
 import SelectItem from '../../../components/SelectItem';
 import LoadData from '../../../function/LoadData';
 import { useFormik } from 'formik';
@@ -57,7 +54,7 @@ const NewProduct = ({ navigation }) => {
       <View>
         <Pressable
           onPress={() => {
-            navigation.navigate('ViewProducts');
+            navigation.replace('SellerScreens');
           }}
         >
           <Ionicons name="arrow-back" size={24} color="black" />

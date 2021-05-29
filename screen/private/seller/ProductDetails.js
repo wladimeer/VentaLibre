@@ -5,23 +5,102 @@ import {
   FlatList,
   Dimensions,
   StatusBar,
-  ActivityIndicator
+  ActivityIndicator,
+  SafeAreaView
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Image, Card } from 'react-native-elements';
-import React from 'react';
+import AlertPro from 'react-native-alert-pro';
+import React, { useRef, useState } from 'react';
+import Firebase from '../../../service/Firebase';
 
 const ProductDetails = ({ route, navigation }) => {
   const { product } = route.params;
   const { width, height } = Dimensions.get('screen');
+  const message = useRef(null);
+  const warning = useRef(null);
+  const [text, setText] = useState('');
 
   return (
-    <View>
+    <SafeAreaView>
       <StatusBar animated={true} backgroundColor="#000000" />
+
+      <AlertPro
+        ref={message}
+        showCancel={false}
+        showConfirm={false}
+        title="Atención"
+        message={text}
+        onConfirm={() => message.current.close()}
+        customStyles={{
+          mask: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          },
+          container: {
+            width: '80%',
+            shadowOpacity: 0.1,
+            shadowRadius: 10
+          }
+        }}
+      />
+
+      <AlertPro
+        ref={warning}
+        onConfirm={() => {
+          Firebase.DeleteProduct(product.id)
+            .then((response) => {
+              setText(String(response));
+              warning.current.close();
+              message.current.open();
+
+              setTimeout(() => {
+                navigation.replace('SellerScreens');
+                setText('');
+              }, 2000);
+            })
+            .catch((response) => {
+              setText(String(response));
+              warning.current.close();
+              message.current.open();
+            });
+        }}
+        onCancel={() => warning.current.close()}
+        title="Atención"
+        message={text}
+        textConfirm="Eliminar"
+        textCancel="Cancelar"
+        customStyles={{
+          mask: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          },
+          container: {
+            width: '80%',
+            shadowOpacity: 0.1,
+            shadowRadius: 10
+          },
+          buttonConfirm: {
+            borderWidth: 2,
+            backgroundColor: 'transparent',
+            borderColor: '#1B1A7B'
+          },
+          buttonCancel: {
+            borderWidth: 2,
+            backgroundColor: 'transparent',
+            borderColor: '#E91212'
+          },
+          textConfirm: {
+            color: '#000000'
+          },
+          textCancel: {
+            color: '#000000'
+          }
+        }}
+      />
+
       <View>
         <Pressable
           onPress={() => {
-            navigation.navigate('ViewProducts');
+            navigation.replace('SellerScreens');
           }}
         >
           <Ionicons name="arrow-back" size={24} color="black" />
@@ -30,8 +109,8 @@ const ProductDetails = ({ route, navigation }) => {
       </View>
 
       <View>
-        <Text>{product && product.nombre}</Text>
-        <Text>${product && product.precio}</Text>
+        <Text>{product.name}</Text>
+        <Text>${product.price}</Text>
       </View>
 
       <View>
@@ -40,8 +119,8 @@ const ProductDetails = ({ route, navigation }) => {
             horizontal
             pagingEnabled
             style={{ width: width, height: 200 }}
-            data={product.fotos}
-            keyExtractor={(index) => index.id.toString()}
+            data={product.photos}
+            keyExtractor={(item) => item.url}
             renderItem={({ item }) => {
               return (
                 <Pressable
@@ -54,7 +133,7 @@ const ProductDetails = ({ route, navigation }) => {
                     borderTopRightRadius: 5
                   }}
                   onPress={() => {
-                    navigation.navigate('FullScreen', { fotos: product.fotos });
+                    navigation.navigate('FullScreen', { photos: product.photos });
                   }}
                 >
                   <Image
@@ -76,38 +155,39 @@ const ProductDetails = ({ route, navigation }) => {
       </View>
 
       <View>
-        <Text>{product && product.descripcion}</Text>
+        <Text>{product.description}</Text>
         <View>
           <Text>Publicación:</Text>
-          <Text>{product && product.publicacion}</Text>
+          <Text>{product.creation}</Text>
         </View>
         <View>
           <Text>Estado:</Text>
-          <Text>{product && product.estado}</Text>
+          <Text>{product.state}</Text>
         </View>
         <View>
           <Text>Cantidad:</Text>
-          <Text>{product && product.cantidad}</Text>
+          <Text>{product.quantity}</Text>
         </View>
       </View>
 
       <View>
         <Pressable
           onPress={() => {
-            console.log('actualizar', product.id);
+            navigation.navigate('UpdateProduct', { product: product });
           }}
         >
           <Text>ACTUALIZAR</Text>
         </Pressable>
         <Pressable
           onPress={() => {
-            console.log('eliminar', product.id);
+            setText('¿Seguro que quieres eliminar este producto?');
+            warning.current.open();
           }}
         >
           <Text>ELIMINAR</Text>
         </Pressable>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

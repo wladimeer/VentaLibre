@@ -7,7 +7,6 @@ import React from 'react';
 
 const DrawerDesign = (props) => {
   const { user, navigation } = props;
-
   return (
     <View>
       <View>
@@ -18,13 +17,13 @@ const DrawerDesign = (props) => {
           }}
         />
         <View>
-          <Text>{user && user.nombre}</Text>
-          <Text>{user && user.correo}</Text>
+          <Text>{user && user.name}</Text>
+          <Text>{user && user.email}</Text>
         </View>
       </View>
 
       <View>
-        <Pressable onPress={() => console.log('ViewProducts')}>
+        <Pressable onPress={() => navigation.navigate('ViewProducts')}>
           <Feather name="eye" size={24} color="black" />
           <Text>Ver Productos</Text>
         </Pressable>
@@ -47,7 +46,7 @@ const DrawerDesign = (props) => {
         <Pressable
           onPress={() => {
             Firebase.LogoutUser();
-            navigation.navigate('AuthScreens');
+            navigation.replace('AuthScreens');
           }}
         >
           <Ionicons name="exit-outline" size={24} color="black" />

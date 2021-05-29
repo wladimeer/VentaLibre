@@ -42,9 +42,9 @@ const SignInScreen = ({ navigation }) => {
 
           setTimeout(() => {
             if (String(response) == 'Vendedor') {
-              navigation.navigate('SellerScreens');
+              navigation.replace('SellerScreens');
             } else {
-              navigation.navigate('BuyerScreens');
+              navigation.replace('BuyerScreens');
             }
 
             message.current.close();

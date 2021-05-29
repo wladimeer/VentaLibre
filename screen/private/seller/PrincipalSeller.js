@@ -3,6 +3,7 @@ import DrawerDesign from '../../../components/DrawerDesign';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Firebase from '../../../service/Firebase';
 import ProductDetails from './ProductDetails';
+import UpdateProduct from './UpdateProduct';
 import ViewProducts from './ViewProducts';
 import FullScreen from './FullScreen';
 import NewProduct from './NewProduct';
@@ -30,6 +31,7 @@ const PrincipalSeller = ({ navigation }) => {
       <Drawer.Screen name="NewProduct" component={NewProduct} />
       <Drawer.Screen name="ViewProducts" component={ViewProducts} />
       <Drawer.Screen name="ProductDetails" component={ProductDetails} />
+      <Drawer.Screen name="UpdateProduct" component={UpdateProduct} />
       <Drawer.Screen name="FullScreen" component={FullScreen} />
       <Drawer.Screen name="Continue" component={Continue} />
     </Drawer.Navigator>

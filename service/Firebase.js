@@ -21,29 +21,31 @@ const fireauth = firebase.auth;
 const firedata = firebase.database;
 const storage = firebase.storage;
 
-const CreateUser = (user) => {
+const CreateUser = (object) => {
   return new Promise((resolve, reject) => {
     fireauth()
-      .createUserWithEmailAndPassword(user.email, user.password)
+      .createUserWithEmailAndPassword(object.email, object.password)
       .then((response) => {
-        user.registerDate = moment().format('DD-MM-YYYY');
-        (user.password = null), (user.uid = uid(32));
+        object.registerDate = moment().format('DD-MM-YYYY');
+        (object.password = null), (object.uid = uid(32));
 
-        const object = {
-          id: user.uid,
-          nombre: user.name,
-          direccion: user.address,
-          rut: user.rut.toUpperCase(),
-          celular: Number.parseInt(user.cellphone),
-          fecha_registro: user.registerDate,
-          comuna: user.commune,
-          region: user.region,
-          correo: user.email,
-          tipo: user.type
-        };
+        firedata()
+          .ref('usuarios')
+          .push()
+          .set({
+            id: object.uid,
+            nombre: object.name,
+            direccion: object.address,
+            rut: object.rut.toUpperCase(),
+            celular: Number.parseInt(object.cellphone),
+            fecha_registro: object.registerDate,
+            comuna: object.commune,
+            region: object.region,
+            correo: object.email,
+            tipo: object.type
+          });
 
-        firedata().ref('usuarios').push().set(object);
-        console.log(response.user);
+        resolve(object.type);
       })
       .catch((response) => {
         switch (response.code) {
@@ -67,10 +69,10 @@ const CreateUser = (user) => {
   });
 };
 
-const LoginUser = (form) => {
+const LoginUser = (object) => {
   return new Promise((resolve, reject) => {
     fireauth()
-      .signInWithEmailAndPassword(form.email, form.password)
+      .signInWithEmailAndPassword(object.email, object.password)
       .then((response) => {
         SearchUser(response.user.email).then((response) => {
           resolve(response.tipo);
@@ -122,60 +124,246 @@ const CurrentUser = () => {
 
     if (user != null) {
       SearchUser(user.email).then((response) => {
-        resolve(response);
+        resolve({
+          uid: response.id,
+          name: response.nombre,
+          address: response.direccion,
+          rut: response.rut,
+          cellphone: response.celular,
+          registerDate: response.fecha_registro,
+          commune: response.comuna,
+          region: response.region,
+          email: response.correo,
+          type: response.tipo
+        });
       });
     }
   });
 };
 
-const GenerateId = () => {
+const CreateProduct = (object) => {
   return new Promise((resolve, reject) => {
-    resolve(uid(32));
+    CurrentUser().then((response) => {
+      CreateGallery(response, object.photos).then((photos) => {
+        firedata()
+          .ref('productos/' + response.uid)
+          .push()
+          .set({
+            nombre: object.name.trim(),
+            descripcion: object.description.trim(),
+            fecha_creacion: moment().format('DD-MM-YYYY'),
+            cantidad: Number(object.quantity),
+            estado: object.state.trim(),
+            precio: Number(object.price),
+            categoria: object.category,
+            fotos: photos
+          })
+          .then((response) => {
+            resolve('Producto publicado!');
+          })
+          .catch((response) => {
+            reject('Hubo un error al publicar!');
+          });
+      });
+    });
   });
 };
 
-const CreateProduct = (product) => {
-  const array = [];
+const ReadProduct = () => {
+  return new Promise((resolve, reject) => {
+    const array = [];
 
-  product.photos.forEach((photo) => {
-    // array.push({
-    //   ['' + uid(32)]: { fecha_creacion: moment().format('DD-MM-YYYY'), url: photo }
-    // });
-    // console.log(photo);
-    // storage()
-    //   .ref('fotos/')
-    //   .child('mifoto')
-    //   .put(photo)
-    //   .then((response) => {
-    //     console.log(response);
-    //   });
+    FindProducts()
+      .then((products) => {
+        products.forEach((product) => {
+          array.push({
+            id: product.key,
+            name: product.val().nombre,
+            state: product.val().estado,
+            quantity: product.val().cantidad,
+            description: product.val().descripcion,
+            creation: product.val().fecha_creacion,
+            category: product.val().categoria,
+            photos: product.val().fotos,
+            price: product.val().precio
+          });
+        });
+
+        resolve(array);
+      })
+      .catch((response) => {
+        reject(response);
+      });
   });
-
-  const path = storage().ref('fotos/').child('mifoto4');
-  path.putString(product.photos[0]).then((response) => {
-    // console.log(response);
-  });
-
-  // path.put(product.photos[0]).then((response) => {
-  // console.log(response);
-  // });
-
-  console.log(path.bucket + path.fullPath);
-
-  // const object = {
-  //   ['' + uid(32)]: {
-  //     nombre: product.name,
-  //     descripcion: product.description,
-  //     fecha_creacion: moment().format('DD-MM-YYYY'),
-  //     cantidad: Number(product.quantity),
-  //     estado: product.state,
-  //     precio: Number(product.price),
-  //     categoria: product.category,
-  //     fotos: array
-  //   }
-  // };
-
-  // console.log(object);
 };
 
-export default { CreateUser, LoginUser, LogoutUser, CurrentUser, CreateProduct };
+// /**
+//  * Esta función actualiza un producto recibiendo como parametro el id de este.
+//  * @param {String} code El cógigo que se recibe representa el id del producto a actualizar.
+//  * @returns {String} Retorna una cadena de texto en la que se indica la respuesta.
+//  */
+
+const UpdateProduct = (object) => {
+  return new Promise((resolve, reject) => {
+    FindProducts()
+      .then((products) => {
+        products.forEach((product) => {
+          if (product.key == object.id) {
+            product.ref.update({
+              nombre: object.name.trim(),
+              cantidad: Number(object.quantity),
+              precio: Number(object.price)
+            });
+
+            resolve('Producto actualizado!');
+          }
+        });
+      })
+      .catch((response) => {
+        reject('Hubo un error al actualizar!');
+      });
+  });
+};
+
+const DeleteProduct = (code) => {
+  return new Promise((resolve, reject) => {
+    FindProducts().then((products) => {
+      products.forEach((product) => {
+        if (product.key == code) {
+          product.ref
+            .remove()
+            .then((response) => {
+              resolve('Producto eliminado!');
+            })
+            .catch((response) => {
+              reject('Hubo un error al eliminar!');
+            });
+        }
+      });
+    });
+  });
+};
+
+const FindProducts = () => {
+  return new Promise((resolve, reject) => {
+    CurrentUser()
+      .then((user) => {
+        firedata()
+          .ref('productos')
+          .on('value', (response) => {
+            response.forEach((products) => {
+              if (user.uid == products.key) {
+                resolve(products);
+              }
+            });
+          });
+      })
+      .catch((response) => {
+        reject(response);
+      });
+  });
+};
+
+const SearchProducts = (name) => {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    FindProducts()
+      .then((products) => {
+        products.forEach((product) => {
+          if (product.val().nombre.toLowerCase().startsWith(name.toLowerCase())) {
+            array.push({
+              id: product.key,
+              name: product.val().nombre,
+              state: product.val().estado,
+              quantity: product.val().cantidad,
+              description: product.val().descripcion,
+              creation: product.val().fecha_creacion,
+              category: product.val().categoria,
+              photos: product.val().fotos,
+              price: product.val().precio
+            });
+          }
+        });
+
+        resolve(array);
+      })
+      .catch((response) => {
+        reject(response);
+      });
+  });
+};
+
+const FilterProducts = (category) => {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    FindProducts()
+      .then((products) => {
+        products.forEach((product) => {
+          if (product.categoria === category) {
+            array.push({
+              id: product.key,
+              name: product.val().nombre,
+              state: product.val().estado,
+              quantity: product.val().cantidad,
+              description: product.val().descripcion,
+              creation: product.val().fecha_creacion,
+              category: product.val().categoria,
+              photos: product.val().fotos,
+              price: product.val().precio
+            });
+          }
+
+          resolve(array);
+        });
+      })
+      .catch((response) => {
+        reject(response);
+      });
+  });
+};
+
+const CreateGallery = (user, photos) => {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    photos.forEach(async (value) => {
+      const response = await fetch(value);
+      const photo = await response.blob();
+
+      storage()
+        .ref()
+        .child(user.uid + '/' + uid(32))
+        .put(photo)
+        .then((response) => {
+          response.ref.getDownloadURL().then((url) => {
+            array.push({
+              fecha_creacion: moment().format('DD-MM-YYYY'),
+              url: url
+            });
+
+            if (array.length == photos.length) {
+              resolve(array);
+            }
+          });
+        })
+        .catch((response) => {
+          reject(response);
+        });
+    });
+  });
+};
+
+export default {
+  CreateUser,
+  LoginUser,
+  LogoutUser,
+  CurrentUser,
+  CreateProduct,
+  ReadProduct,
+  DeleteProduct,
+  UpdateProduct,
+  SearchProducts,
+  FilterProducts
+};

@@ -1,24 +1,24 @@
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { SafeAreaView, StatusBar } from 'react-native';
 import { ScrollView, Pressable, View, Text, TextInput } from 'react-native';
 import React, { useRef, useState } from 'react';
 import AlertPro from 'react-native-alert-pro';
 import Firebase from '../../../service/Firebase';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Image, Card } from 'react-native-elements';
+import { Image } from 'react-native-elements';
 import SelectItem from '../../../components/SelectItem';
 import LoadData from '../../../function/LoadData';
 import { useFormik } from 'formik';
 import FilePickerManager from 'react-native-file-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as yup from 'yup';
-import { uid } from 'uid';
-import moment from 'moment';
 
 const Continue = ({ route, navigation }) => {
   const [selectVisible, setSelectVisible] = useState(false);
   const [options, setOptions] = useState([{}]);
 
   const message = useRef(null);
+  const warning = useRef(null);
+  const [text, setText] = useState('');
 
   const ContinueSchema = yup.object().shape({
     photos: yup
@@ -39,13 +39,78 @@ const Continue = ({ route, navigation }) => {
     },
     validationSchema: ContinueSchema,
     onSubmit: (values) => {
-      Firebase.CreateProduct(Object.assign(values, route.params.photoData));
+      setText('Publicando producto...');
+      message.current.open();
+
+      Firebase.CreateProduct(Object.assign(values, route.params.photoData))
+        .then((response) => {
+          setText(String(response));
+
+          setFieldValue('photos', []);
+          resetForm();
+
+          setTimeout(() => {
+            navigation.replace('SellerScreens');
+            message.current.close();
+            setText('');
+          }, 2000);
+        })
+        .catch((response) => {
+          setText(String(response));
+          message.current.open();
+        });
     }
   });
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#8E8887' }}>
       <StatusBar animated={true} backgroundColor="#000000" />
+
+      <AlertPro
+        ref={message}
+        showCancel={false}
+        showConfirm={false}
+        title="Atención"
+        message={text}
+        onConfirm={() => message.current.close()}
+        customStyles={{
+          mask: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          },
+          container: {
+            width: '80%',
+            shadowOpacity: 0.1,
+            shadowRadius: 10
+          }
+        }}
+      />
+
+      <AlertPro
+        ref={warning}
+        onConfirm={() => warning.current.close()}
+        title="Atención"
+        showCancel={false}
+        message={text}
+        textConfirm="Entiendo"
+        customStyles={{
+          mask: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          },
+          container: {
+            width: '80%',
+            shadowOpacity: 0.1,
+            shadowRadius: 10
+          },
+          buttonConfirm: {
+            borderWidth: 2,
+            backgroundColor: 'transparent',
+            borderColor: '#1B1A7B'
+          },
+          textConfirm: {
+            color: '#000000'
+          }
+        }}
+      />
 
       <View>
         <Pressable
@@ -64,18 +129,10 @@ const Continue = ({ route, navigation }) => {
           <Pressable
             onPress={() => {
               FilePickerManager.showFilePicker(null, (response) => {
-                // console.log('Response = ', response);
-
-                if (response.didCancel) {
-                  console.log('User cancelled file picker');
-                } else if (response.error) {
-                  console.log('FilePickerManager Error: ', response.error);
-                }
-
                 if (response.fileName) {
                   if (
-                    response.type == 'image/jpeg' ||
-                    response.type == 'image/png'
+                    response.type === 'image/jpeg' ||
+                    response.type === 'image/png'
                   ) {
                     const { photos } = values;
                     photos.push(response.uri);
@@ -93,30 +150,29 @@ const Continue = ({ route, navigation }) => {
         </View>
 
         <View>
-          {values.photos &&
-            values.photos.map((photo, index) => {
-              return (
-                <Image
-                  key={index}
-                  style={{ width: 100, height: 100 }}
-                  source={{ uri: photo }}
-                >
-                  <Pressable
-                    onPress={() => {
-                      const { photos } = values;
-                      photos.splice(
-                        photos.findIndex((p) => p == photo),
-                        1
-                      );
+          {values.photos.map((photo, index) => {
+            return (
+              <Image
+                key={index}
+                style={{ width: 100, height: 100 }}
+                source={{ uri: photo }}
+              >
+                <Pressable
+                  onPress={() => {
+                    const { photos } = values;
+                    photos.splice(
+                      photos.findIndex((p) => p === photo),
+                      1
+                    );
 
-                      setFieldValue('photos', photos);
-                    }}
-                  >
-                    <AntDesign name="close" size={24} color="black" />
-                  </Pressable>
-                </Image>
-              );
-            })}
+                    setFieldValue('photos', photos);
+                  }}
+                >
+                  <AntDesign name="close" size={24} color="black" />
+                </Pressable>
+              </Image>
+            );
+          })}
         </View>
 
         <View>

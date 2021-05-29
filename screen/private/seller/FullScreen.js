@@ -1,27 +1,24 @@
 import {
   View,
-  Text,
   Pressable,
-  FlatList,
   Dimensions,
-  ActivityIndicator,
   Animated,
   StyleSheet,
-  StatusBar
+  StatusBar,
+  SafeAreaView
 } from 'react-native';
-import { Image, Card } from 'react-native-elements';
 import React, { useRef } from 'react';
 
 const FullScreen = ({ route, navigation }) => {
-  const { fotos } = route.params;
+  const { photos } = route.params;
   const { width, height } = Dimensions.get('screen');
   const scrollX = useRef(new Animated.Value(0)).current;
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#000' }}>
       <StatusBar hidden={false} />
       <View style={StyleSheet.absoluteFillObject}>
-        {fotos.map((foto, index) => {
+        {photos.map((photo, index) => {
           const opacity = scrollX.interpolate({
             inputRange: [(index - 1) * width, index * width, (index + 1) * width],
             outputRange: [0, 1, 0]
@@ -30,7 +27,7 @@ const FullScreen = ({ route, navigation }) => {
           return (
             <Animated.Image
               key={index}
-              source={{ uri: foto.url }}
+              source={{ uri: photo.url }}
               style={[StyleSheet.absoluteFillObject, { opacity }]}
               blurRadius={50}
             />
@@ -44,8 +41,8 @@ const FullScreen = ({ route, navigation }) => {
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
           { useNativeDriver: true }
         )}
-        data={fotos}
-        keyExtractor={(index) => index.id.toString()}
+        data={photos}
+        keyExtractor={(item) => item.url}
         renderItem={({ item }) => {
           return (
             <Pressable
@@ -72,7 +69,7 @@ const FullScreen = ({ route, navigation }) => {
           );
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

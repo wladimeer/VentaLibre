@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import PrincipalBuyer from './screen/private/buyer/PrincipalBuyer';
 import PrincipalSeller from './screen/private/seller/PrincipalSeller';
+import PrincipalBuyer from './screen/private/buyer/PrincipalBuyer';
 import SignInScreen from './screen/public/SignInScreen';
 import React from 'react';
 

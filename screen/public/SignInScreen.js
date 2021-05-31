@@ -1,10 +1,11 @@
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { SafeAreaView, StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { ScrollView, Pressable, View, Text, TextInput } from 'react-native';
 import React, { useRef, useState } from 'react';
 import AlertPro from 'react-native-alert-pro';
 import Firebase from '../../service/Firebase';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const SignInScreen = ({ navigation }) => {
   const [text, setText] = useState('');

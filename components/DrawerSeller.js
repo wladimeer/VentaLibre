@@ -5,7 +5,7 @@ import { Avatar } from 'react-native-elements';
 import Firebase from '../service/Firebase';
 import React from 'react';
 
-const DrawerDesign = (props) => {
+const DrawerSeller = (props) => {
   const { user, navigation } = props;
   return (
     <View>
@@ -33,12 +33,12 @@ const DrawerDesign = (props) => {
           <Text>Nuevo Producto</Text>
         </Pressable>
 
-        <Pressable onPress={() => console.log('Ratings')}>
+        <Pressable onPress={() => navigation.navigate('ViewRatings')}>
           <Feather name="star" size={24} color="black" />
           <Text>Valoraciones</Text>
         </Pressable>
 
-        <Pressable onPress={() => console.log('Sales')}>
+        <Pressable onPress={() => navigation.navigate('ViewSales')}>
           <Feather name="shopping-bag" size={24} color="black" />
           <Text>Ventas</Text>
         </Pressable>
@@ -57,4 +57,4 @@ const DrawerDesign = (props) => {
   );
 };
 
-export default DrawerDesign;
+export default DrawerSeller;

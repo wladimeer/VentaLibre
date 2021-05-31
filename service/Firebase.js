@@ -301,7 +301,7 @@ const FilterProducts = (category) => {
     FindProducts()
       .then((products) => {
         products.forEach((product) => {
-          if (product.categoria === category) {
+          if (product.val().categoria == category) {
             array.push({
               id: product.key,
               name: product.val().nombre,

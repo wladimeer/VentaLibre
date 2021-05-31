@@ -52,7 +52,7 @@ const FullScreen = ({ route, navigation }) => {
                 alignItems: 'center'
               }}
               onPress={() => {
-                navigation.navigate('ProductDetails');
+                navigation.goBack();
               }}
             >
               <Animated.Image

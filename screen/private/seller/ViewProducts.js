@@ -57,7 +57,7 @@ const ViewProducts = ({ navigation }) => {
 
         <Pressable
           onPress={() => {
-            console.log('filter');
+            navigation.navigate('ReduceProducts');
           }}
         >
           <Feather name="filter" size={24} color="white" />

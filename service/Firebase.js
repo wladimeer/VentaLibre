@@ -100,8 +100,29 @@ const LoginUser = (object) => {
   });
 };
 
-const LogoutUser = () => {
-  firebase.auth().signOut();
+const FindUser = (value) => {
+  return new Promise((resolve, reject) => {
+    firedata()
+      .ref('usuarios')
+      .on('value', (response) => {
+        response.forEach((user) => {
+          if (user.val().id == value) {
+            resolve({
+              uid: user.val().id,
+              name: user.val().nombre,
+              address: user.val().direccion,
+              rut: user.val().rut,
+              cellphone: user.val().celular,
+              registerDate: user.val().fecha_registro,
+              commune: user.val().comuna,
+              region: user.val().region,
+              email: user.val().correo,
+              type: user.val().tipo
+            });
+          }
+        });
+      });
+  });
 };
 
 const SearchUser = (value) => {
@@ -141,6 +162,10 @@ const CurrentUser = () => {
   });
 };
 
+const LogoutUser = () => {
+  firebase.auth().signOut();
+};
+
 const CreateProduct = (object) => {
   return new Promise((resolve, reject) => {
     CurrentUser().then((response) => {
@@ -169,7 +194,7 @@ const CreateProduct = (object) => {
   });
 };
 
-const ReadProduct = () => {
+const ReadProducts = () => {
   return new Promise((resolve, reject) => {
     const array = [];
 
@@ -244,6 +269,37 @@ const DeleteProduct = (code) => {
   });
 };
 
+const FindAllProducts = () => {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    firedata()
+      .ref('productos')
+      .on('value', (response) => {
+        response.forEach((products) => {
+          FindUser(products.key).then((user) => {
+            products.forEach((product) => {
+              array.push({
+                id: product.key,
+                name: product.val().nombre,
+                state: product.val().estado,
+                quantity: product.val().cantidad,
+                description: product.val().descripcion,
+                creation: product.val().fecha_creacion,
+                category: product.val().categoria,
+                photos: product.val().fotos,
+                price: product.val().precio,
+                user: user
+              });
+            });
+
+            resolve(array);
+          });
+        });
+      });
+  });
+};
+
 const FindProducts = () => {
   return new Promise((resolve, reject) => {
     CurrentUser()
@@ -260,6 +316,41 @@ const FindProducts = () => {
       })
       .catch((response) => {
         reject(response);
+      });
+  });
+};
+
+const SearchAllProducts = (name) => {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    firedata()
+      .ref('productos')
+      .on('value', (response) => {
+        response.forEach((products) => {
+          FindUser(products.key).then((user) => {
+            products.forEach((product) => {
+              if (
+                product.val().nombre.toLowerCase().startsWith(name.toLowerCase())
+              ) {
+                array.push({
+                  id: product.key,
+                  name: product.val().nombre,
+                  state: product.val().estado,
+                  quantity: product.val().cantidad,
+                  description: product.val().descripcion,
+                  creation: product.val().fecha_creacion,
+                  category: product.val().categoria,
+                  photos: product.val().fotos,
+                  price: product.val().precio,
+                  user: user
+                });
+              }
+            });
+
+            resolve(array);
+          });
+        });
       });
   });
 };
@@ -290,6 +381,39 @@ const SearchProducts = (name) => {
       })
       .catch((response) => {
         reject(response);
+      });
+  });
+};
+
+const FilterAllProducts = (category) => {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    firedata()
+      .ref('productos')
+      .on('value', (response) => {
+        response.forEach((products) => {
+          FindUser(products.key).then((user) => {
+            products.forEach((product) => {
+              if (product.val().categoria == category) {
+                array.push({
+                  id: product.key,
+                  name: product.val().nombre,
+                  state: product.val().estado,
+                  quantity: product.val().cantidad,
+                  description: product.val().descripcion,
+                  creation: product.val().fecha_creacion,
+                  category: product.val().categoria,
+                  photos: product.val().fotos,
+                  price: product.val().precio,
+                  user: user
+                });
+              }
+            });
+
+            resolve(array);
+          });
+        });
       });
   });
 };
@@ -361,9 +485,12 @@ export default {
   LogoutUser,
   CurrentUser,
   CreateProduct,
-  ReadProduct,
+  ReadProducts,
   DeleteProduct,
   UpdateProduct,
+  FindAllProducts,
+  SearchAllProducts,
   SearchProducts,
+  FilterAllProducts,
   FilterProducts
 };

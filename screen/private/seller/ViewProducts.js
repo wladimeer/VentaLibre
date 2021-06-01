@@ -18,7 +18,7 @@ const ViewProducts = ({ navigation }) => {
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    Firebase.ReadProduct().then((response) => {
+    Firebase.ReadProducts().then((response) => {
       setList(response);
     });
   }, []);

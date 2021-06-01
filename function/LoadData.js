@@ -1,3 +1,5 @@
+import country from '../assets/api/country.json';
+
 const States = () => {
   return new Promise((resolve, reject) => {
     resolve([
@@ -33,4 +35,39 @@ const Categories = () => {
   });
 };
 
-export default { States, Categories };
+const Regions = () => {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    country.regions.forEach((region) => {
+      array.push({
+        value: region.name,
+        communes: region.communes,
+        key: 'region'
+      });
+    });
+
+    resolve(array);
+  });
+};
+
+const Communes = function (name) {
+  return new Promise((resolve, reject) => {
+    const array = [];
+
+    country.regions.forEach((region) => {
+      if (region.name == name) {
+        region.communes.forEach((commune) => {
+          array.push({
+            value: commune.name,
+            key: 'commune'
+          });
+        });
+
+        resolve(array);
+      }
+    });
+  });
+};
+
+export default { States, Categories, Regions, Communes };

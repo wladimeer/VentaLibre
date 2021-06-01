@@ -155,9 +155,9 @@ const SignInScreen = ({ navigation }) => {
 
         <View>
           <Text
-          // onPress={() => {
-          // navigation.navigate('SignUpScreen');
-          // }}
+            onPress={() => {
+              navigation.navigate('SignUpScreen');
+            }}
           >
             ¿No tienes una cuenta? Crear Cuenta
           </Text>

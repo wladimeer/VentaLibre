@@ -7,6 +7,7 @@ import React from 'react';
 
 const DrawerBuyer = (props) => {
   const { user, navigation } = props;
+
   return (
     <View>
       <View>
@@ -28,12 +29,12 @@ const DrawerBuyer = (props) => {
           <Text>Ver Productos</Text>
         </Pressable>
 
-        <Pressable onPress={() => console.log('view purchases')}>
+        <Pressable onPress={() => navigation.navigate('ViewPurchases')}>
           <Feather name="shopping-bag" size={24} color="black" />
-          <Text>Ventas</Text>
+          <Text>Compras</Text>
         </Pressable>
 
-        <Pressable onPress={() => console.log('about')}>
+        <Pressable onPress={() => navigation.navigate('About')}>
           <Feather name="alert-circle" size={24} color="black" />
           <Text>Acerca de</Text>
         </Pressable>

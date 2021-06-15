@@ -40,16 +40,9 @@ const ProductFiltered = ({ route, navigation }) => {
                 key={index}
                 onPress={() => {
                   navigation.navigate('ProductDetails', {
-                    product: {
-                      id: product.id,
-                      photos: product.photos,
-                      name: product.name,
-                      price: product.price,
-                      description: product.description,
-                      creation: product.creation,
-                      quantity: product.quantity,
-                      state: product.state
-                    }
+                    user: product.user,
+                    rating: product.rating,
+                    product: product
                   });
                 }}
               >

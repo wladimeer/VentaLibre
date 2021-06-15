@@ -14,37 +14,15 @@ import Firebase from '../../../service/Firebase';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ViewSales = ({ navigation }) => {
-  // const [list, seyList] = useState([]);
+  const [list, setList] = useState([]);
 
   const { width, height } = Dimensions.get('screen');
 
-  const list = [
-    {
-      product: {
-        name: 'Zapatos de terno',
-        price: 25000,
-        state: 'Nuevo',
-        quantity: 1,
-        photos: [
-          {
-            url: 'https://www.bata.cl/modules/psclfilterhome/images/efc8d92b292fc7a23557a27829f257ef97f8279a_HOMBRE_TALLA_BATA_NORMAL.png',
-            creation: '25/02/2020'
-          },
-          {
-            url: 'https://images-na.ssl-images-amazon.com/images/I/61UN%2B%2BGV3cL._AC_UY500_.jpg',
-            creation: '25/02/2020'
-          }
-        ]
-      },
-      buyer: {
-        name: 'Antonio',
-        email: 'antonio32@mail.com'
-      },
-      buyout: '05/12/2020',
-      total: 25000,
-      quantity: 1
-    }
-  ];
+  useEffect(() => {
+    Firebase.ReadPurchases().then((response) => {
+      setList(response);
+    });
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -94,7 +72,7 @@ const ViewSales = ({ navigation }) => {
                         resizeMode={'contain'}
                       />
                     </View>
-                    <Text>${sales.total}</Text>
+                    <Text>${sales.totalPrice}</Text>
                     <Text>{sales.product.name}</Text>
                   </View>
                 </Card>

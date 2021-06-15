@@ -47,7 +47,7 @@ const ProductDetails = ({ route, navigation }) => {
       <AlertPro
         ref={warning}
         onConfirm={() => {
-          Firebase.DeleteProduct(product.id)
+          Firebase.DeleteProduct(product.uid)
             .then((response) => {
               setText(String(response));
               warning.current.close();
@@ -55,7 +55,6 @@ const ProductDetails = ({ route, navigation }) => {
 
               setTimeout(() => {
                 navigation.replace('SellerScreens');
-                setText('');
               }, 2000);
             })
             .catch((response) => {
@@ -158,7 +157,7 @@ const ProductDetails = ({ route, navigation }) => {
         <Text>{product.description}</Text>
         <View>
           <Text>Publicación:</Text>
-          <Text>{product.creation}</Text>
+          <Text>{product.creationDate}</Text>
         </View>
         <View>
           <Text>Estado:</Text>
@@ -180,7 +179,7 @@ const ProductDetails = ({ route, navigation }) => {
         </Pressable>
         <Pressable
           onPress={() => {
-            setText('¿Seguro que quieres eliminar este producto?');
+            setText('¿Seguro que Quieres Eliminar Este Producto?');
             warning.current.open();
           }}
         >

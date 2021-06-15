@@ -13,44 +13,40 @@ import React, { useEffect, useState } from 'react';
 import Firebase from '../../../service/Firebase';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const ProductFiltered = ({ route, navigation }) => {
+const ViewPurchases = ({ navigation }) => {
+  const [list, setList] = useState([]);
+
   const { width, height } = Dimensions.get('screen');
-  const { products } = route.params;
+
+  useEffect(() => {
+    Firebase.ReadPurchases().then((response) => {
+      setList(response);
+    });
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar animated={true} backgroundColor="#000000" />
+      <StatusBar animated={true} hidden={false} backgroundColor="#000000" />
 
       <View>
         <Pressable
           onPress={() => {
-            navigation.replace('SellerScreens');
+            navigation.replace('BuyerScreens');
           }}
         >
           <Ionicons name="arrow-back" size={24} color="black" />
         </Pressable>
-        <Text>Productos Filtrados</Text>
+        <Text>Compras</Text>
       </View>
 
       <ScrollView>
-        {products.length > 0 ? (
-          products.map((product, index) => {
+        {list.length > 0 ? (
+          list.map((purchase, index) => {
             return (
               <Pressable
                 key={index}
                 onPress={() => {
-                  navigation.navigate('ProductDetails', {
-                    product: {
-                      uid: product.uid,
-                      photos: product.photos,
-                      name: product.name,
-                      price: product.price,
-                      description: product.description,
-                      creationDate: product.creationDate,
-                      quantity: product.quantity,
-                      state: product.state
-                    }
-                  });
+                  navigation.navigate('PurchaseDetails', { purchase: purchase });
                 }}
               >
                 <Card containerStyle={{ borderRadius: 5, padding: 0 }}>
@@ -63,7 +59,7 @@ const ProductFiltered = ({ route, navigation }) => {
                       }}
                     >
                       <Image
-                        source={{ uri: product.photos[0].url }}
+                        source={{ uri: purchase.product.photos[0].url }}
                         style={{
                           width: width,
                           height: height - 569,
@@ -76,8 +72,8 @@ const ProductFiltered = ({ route, navigation }) => {
                         resizeMode={'contain'}
                       />
                     </View>
-                    <Text>${product.price}</Text>
-                    <Text>{product.name}</Text>
+                    <Text>${purchase.totalPrice}</Text>
+                    <Text>{purchase.product.name}</Text>
                   </View>
                 </Card>
               </Pressable>
@@ -85,7 +81,7 @@ const ProductFiltered = ({ route, navigation }) => {
           })
         ) : (
           <View>
-            <Text style={{ color: 'black' }}>No se encontraron publicaciones</Text>
+            <Text style={{ color: 'black' }}>No se encontraron compras</Text>
           </View>
         )}
       </ScrollView>
@@ -93,4 +89,4 @@ const ProductFiltered = ({ route, navigation }) => {
   );
 };
 
-export default ProductFiltered;
+export default ViewPurchases;

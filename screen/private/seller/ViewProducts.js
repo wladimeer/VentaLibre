@@ -47,7 +47,7 @@ const ViewProducts = ({ navigation }) => {
         <SearchBar
           containerStyle={{ width: 200 }}
           platform={'android'}
-          placeholder="Type Here..."
+          placeholder="Ingresa para buscar"
           onChangeText={(value) => {
             Firebase.SearchProducts(value).then((response) => {
               setFind(response);
@@ -72,16 +72,7 @@ const ViewProducts = ({ navigation }) => {
                 key={index}
                 onPress={() => {
                   navigation.navigate('ProductDetails', {
-                    product: {
-                      id: product.id,
-                      photos: product.photos,
-                      name: product.name,
-                      price: product.price,
-                      description: product.description,
-                      creation: product.creation,
-                      quantity: product.quantity,
-                      state: product.state
-                    }
+                    product: product
                   });
                 }}
               >
@@ -122,16 +113,7 @@ const ViewProducts = ({ navigation }) => {
                 key={index}
                 onPress={() => {
                   navigation.navigate('ProductDetails', {
-                    product: {
-                      id: product.id,
-                      photos: product.photos,
-                      name: product.name,
-                      price: product.price,
-                      description: product.description,
-                      creation: product.creation,
-                      quantity: product.quantity,
-                      state: product.state
-                    }
+                    product: product
                   });
                 }}
               >

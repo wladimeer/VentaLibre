@@ -30,7 +30,8 @@ const Categories = () => {
       { key: 'category', value: 'Relojes' },
       { key: 'category', value: 'Salud' },
       { key: 'category', value: 'Tecnología' },
-      { key: 'category', value: 'Vestuario' }
+      { key: 'category', value: 'Vestuario' },
+      { key: 'category', value: 'Otro' }
     ]);
   });
 };

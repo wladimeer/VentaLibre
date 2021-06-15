@@ -6,18 +6,13 @@ import Firebase from '../../../service/Firebase';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ViewRatings = ({ navigation }) => {
-  // const [list, setList] = useState([]);
+  const [list, setList] = useState([]);
 
-  const list = [
-    {
-      buyer: { id: 'a1a', name: 'Antonio', email: 'antonio32@mail.com' },
-      rating: 5
-    },
-    {
-      buyer: { id: 'a2a', name: 'Macarena', email: 'macarena@mail.com' },
-      rating: 2
-    }
-  ];
+  useEffect(() => {
+    Firebase.ReadRatings().then((response) => {
+      setList(response);
+    });
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -41,7 +36,7 @@ const ViewRatings = ({ navigation }) => {
               <View key={index}>
                 <Text>Nombre: {rating.buyer.name}</Text>
                 <Text>Correo: {rating.buyer.email}</Text>
-                <Text>Valoración: {rating.rating}</Text>
+                <Text>Valoración: {rating.rating}/5</Text>
               </View>
             );
           })

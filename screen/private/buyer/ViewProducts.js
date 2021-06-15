@@ -47,7 +47,7 @@ const ViewProducts = ({ navigation }) => {
         <SearchBar
           containerStyle={{ width: 200 }}
           platform={'android'}
-          placeholder="Type Here..."
+          placeholder="Ingresa para buscar"
           onChangeText={(value) => {
             Firebase.SearchAllProducts(value).then((response) => {
               setFind(response);
@@ -71,18 +71,11 @@ const ViewProducts = ({ navigation }) => {
               <Pressable
                 key={index}
                 onPress={() => {
-                  navigation.navigate('ProductDetails', {
-                    product: {
-                      id: product.id,
-                      photos: product.photos,
-                      name: product.name,
-                      price: product.price,
-                      description: product.description,
-                      creation: product.creation,
-                      quantity: product.quantity,
-                      state: product.state
-                    },
-                    user: product.user
+                  Firebase.FindUser(product.user).then((response) => {
+                    navigation.navigate('ProductDetails', {
+                      product: product,
+                      user: response
+                    });
                   });
                 }}
               >
@@ -122,18 +115,11 @@ const ViewProducts = ({ navigation }) => {
               <Pressable
                 key={index}
                 onPress={() => {
-                  navigation.navigate('ProductDetails', {
-                    product: {
-                      id: product.id,
-                      photos: product.photos,
-                      name: product.name,
-                      price: product.price,
-                      description: product.description,
-                      creation: product.creation,
-                      quantity: product.quantity,
-                      state: product.state
-                    },
-                    user: product.user
+                  Firebase.FindUser(product.user).then((response) => {
+                    navigation.navigate('ProductDetails', {
+                      product: product,
+                      user: response
+                    });
                   });
                 }}
               >

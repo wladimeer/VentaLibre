@@ -11,12 +11,11 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Image, Card } from 'react-native-elements';
 import AlertPro from 'react-native-alert-pro';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import Firebase from '../../../service/Firebase';
-import { Linking } from 'react-native';
 
-const ProductDetails = ({ route, navigation }) => {
-  const { product, user, rating } = route.params;
+const PurchaseDetails = ({ route, navigation }) => {
+  const { purchase } = route.params;
   const { width, height } = Dimensions.get('screen');
 
   return (
@@ -26,17 +25,12 @@ const ProductDetails = ({ route, navigation }) => {
       <View>
         <Pressable
           onPress={() => {
-            navigation.replace('BuyerScreens');
+            navigation.goBack();
           }}
         >
           <Ionicons name="arrow-back" size={24} color="black" />
         </Pressable>
-        <Text>Detalle del Producto</Text>
-      </View>
-
-      <View>
-        <Text>{product.name}</Text>
-        <Text>${product.price}</Text>
+        <Text>Detalle de Compra</Text>
       </View>
 
       <View>
@@ -45,7 +39,7 @@ const ProductDetails = ({ route, navigation }) => {
             horizontal
             pagingEnabled
             style={{ width: width, height: 200 }}
-            data={product.photos}
+            data={purchase.product.photos}
             keyExtractor={(item) => item.url}
             renderItem={({ item }) => {
               return (
@@ -59,7 +53,9 @@ const ProductDetails = ({ route, navigation }) => {
                     borderTopRightRadius: 5
                   }}
                   onPress={() => {
-                    navigation.navigate('FullScreen', { photos: product.photos });
+                    navigation.navigate('FullScreen', {
+                      photos: purchase.product.photos
+                    });
                   }}
                 >
                   <Image
@@ -81,74 +77,41 @@ const ProductDetails = ({ route, navigation }) => {
       </View>
 
       <View>
-        <Text>{product.description}</Text>
         <View>
-          <Text>Publicación:</Text>
-          <Text>{product.creationDate}</Text>
+          <Text>Vendedor:</Text>
+          <Text>{purchase.seller.name}</Text>
+        </View>
+        <View>
+          <Text>Correo:</Text>
+          <Text>{purchase.seller.email}</Text>
+        </View>
+        <View>
+          <Text>Producto:</Text>
+          <Text>{purchase.product.name}</Text>
         </View>
         <View>
           <Text>Estado:</Text>
-          <Text>{product.state}</Text>
+          <Text>{purchase.product.state}</Text>
         </View>
         <View>
           <Text>Cantidad:</Text>
-          <Text>{product.quantity}</Text>
-        </View>
-
-        <View>
-          <Text>Vendedor:</Text>
-          <Text>{user.name}</Text>
+          <Text>{purchase.quantity}</Text>
         </View>
         <View>
-          <Text>Celular:</Text>
-          <Text>{user.cellphone}</Text>
+          <Text>Precio Unidad:</Text>
+          <Text>${purchase.product.price}</Text>
         </View>
         <View>
-          <Text>Valoración:</Text>
-          <Text>{user.rating}</Text>
+          <Text>Precio Total:</Text>
+          <Text>${purchase.totalPrice}</Text>
         </View>
-      </View>
-
-      <View>
-        {product.quantity > 0 ? (
-          <Pressable
-            onPress={() => {
-              const code = 597055555532;
-              const key =
-                '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C';
-
-              navigation.navigate('QuantitySelection', {
-                user: user,
-                product: product,
-                commerce: {
-                  code: code,
-                  key: key
-                }
-              });
-            }}
-          >
-            <Text>COMPRAR</Text>
-          </Pressable>
-        ) : (
-          <Pressable disabled>
-            <Text>COMPRAR</Text>
-          </Pressable>
-        )}
-        <Pressable
-          onPress={() => {
-            Linking.openURL(
-              'whatsapp://send?text=' +
-                'Mensaje' +
-                '&phone=56' +
-                String(user.cellphone)
-            );
-          }}
-        >
-          <Text>MENSAJE</Text>
-        </Pressable>
+        <View>
+          <Text>Venta:</Text>
+          <Text>{purchase.buyDate}</Text>
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
-export default ProductDetails;
+export default PurchaseDetails;

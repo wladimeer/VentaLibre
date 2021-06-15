@@ -39,25 +39,21 @@ const Continue = ({ route, navigation }) => {
     },
     validationSchema: ContinueSchema,
     onSubmit: (values) => {
-      setText('Publicando producto...');
+      setText('Publicando Producto...');
       message.current.open();
 
       Firebase.CreateProduct(Object.assign(values, route.params.photoData))
         .then((response) => {
           setText(String(response));
 
-          setFieldValue('photos', []);
-          resetForm();
-
           setTimeout(() => {
             navigation.replace('SellerScreens');
-            message.current.close();
-            setText('');
           }, 2000);
         })
         .catch((response) => {
           setText(String(response));
           message.current.open();
+          return;
         });
     }
   });
@@ -142,7 +138,7 @@ const Continue = ({ route, navigation }) => {
               });
             }}
           >
-            <TextInput editable={false} placeholder="Seleccionar foto" />
+            <TextInput editable={false} placeholder="Seleccionar Foto" />
           </Pressable>
           <Text style={{ color: 'white' }}>
             {errors.photos ? errors.photos : ''}

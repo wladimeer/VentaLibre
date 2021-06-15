@@ -35,16 +35,13 @@ const UpdateProduct = ({ route, navigation }) => {
     },
     validationSchema: UpdateProductSchema,
     onSubmit: (values) => {
-      Firebase.UpdateProduct(Object.assign(values, { id: product.id }))
+      Firebase.UpdateProduct(Object.assign(values, { uid: product.uid }))
         .then((response) => {
           setText(String(response));
           message.current.open();
 
           setTimeout(() => {
             navigation.replace('SellerScreens');
-            message.current.close();
-            resetForm();
-            setText('');
           }, 2000);
         })
         .catch((response) => {});

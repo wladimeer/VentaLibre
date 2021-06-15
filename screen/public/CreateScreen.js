@@ -58,15 +58,13 @@ const CreateScreen = function ({ route, navigation }) {
           setState(true);
 
           setTimeout(() => {
+            message.current.close();
+
             if (String(response) == 'Vendedor') {
               navigation.replace('SellerScreens');
             } else {
               navigation.replace('BuyerScreens');
             }
-
-            message.current.close();
-            setState(false);
-            resetForm();
           }, 2800);
         })
         .catch((response) => {

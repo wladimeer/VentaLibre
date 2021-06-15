@@ -5,9 +5,11 @@ import PrincipalBuyer from './screen/private/buyer/PrincipalBuyer';
 import SignUpScreen from './screen/public/SignUpScreen';
 import SignInScreen from './screen/public/SignInScreen';
 import CreateScreen from './screen/public/CreateScreen';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import React from 'react';
 
-const Stack = createStackNavigator();
+// const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const AuthScreens = () => {
   return (

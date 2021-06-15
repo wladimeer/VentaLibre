@@ -30,7 +30,7 @@ const PurchaseDetails = ({ route, navigation }) => {
         >
           <Ionicons name="arrow-back" size={24} color="black" />
         </Pressable>
-        <Text>Detalle del Venta</Text>
+        <Text>Detalle de Venta</Text>
       </View>
 
       <View>
@@ -103,11 +103,11 @@ const PurchaseDetails = ({ route, navigation }) => {
         </View>
         <View>
           <Text>Precio Total:</Text>
-          <Text>${purchase.total}</Text>
+          <Text>${purchase.totalPrice}</Text>
         </View>
         <View>
           <Text>Venta:</Text>
-          <Text>{purchase.buyout}</Text>
+          <Text>{purchase.buyDate}</Text>
         </View>
       </View>
     </SafeAreaView>

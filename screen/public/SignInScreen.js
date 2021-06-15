@@ -37,20 +37,18 @@ const SignInScreen = ({ navigation }) => {
     onSubmit: (values) => {
       Firebase.LoginUser(values)
         .then((response) => {
-          setText('Iniciando sesión...');
+          setText('Iniciando Sesión...');
           message.current.open();
           setState(true);
 
           setTimeout(() => {
+            message.current.close();
+
             if (String(response) == 'Vendedor') {
               navigation.replace('SellerScreens');
             } else {
               navigation.replace('BuyerScreens');
             }
-
-            message.current.close();
-            setState(false);
-            resetForm();
           }, 2000);
         })
         .catch((response) => {

@@ -7,6 +7,7 @@ import React from 'react';
 
 const DrawerSeller = (props) => {
   const { user, navigation } = props;
+
   return (
     <View>
       <View>

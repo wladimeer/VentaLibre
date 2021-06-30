@@ -1,72 +1,59 @@
-import {
-  View,
-  Text,
-  Pressable,
-  FlatList,
-  Dimensions,
-  StatusBar,
-  ActivityIndicator,
-  SafeAreaView
-} from 'react-native';
+import { View, Text, Pressable, FlatList } from 'react-native';
+import { Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
+import { Image, Card, Divider } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Image, Card } from 'react-native-elements';
-import AlertPro from 'react-native-alert-pro';
-import React, { useRef, useState } from 'react';
-import Firebase from '../../../service/Firebase';
+import React from 'react';
+
+const { width, height } = Dimensions.get('screen');
 
 const PurchaseDetails = ({ route, navigation }) => {
   const { purchase } = route.params;
-  const { width, height } = Dimensions.get('screen');
 
   return (
-    <SafeAreaView>
-      <StatusBar animated={true} backgroundColor="#000000" />
-
-      <View>
+    <View style={styles.container}>
+      <View style={styles.header}>
         <Pressable
           onPress={() => {
             navigation.goBack();
           }}
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons
+            size={24}
+            style={styles.iconsButton}
+            name="arrow-back"
+            color="black"
+          />
         </Pressable>
-        <Text>Detalle de Venta</Text>
+        <Text style={styles.textTitle}>Detalle de Venta</Text>
       </View>
 
-      <View>
-        <Card containerStyle={{ borderRadius: 5, padding: 0 }}>
+      <Divider orientation="horizontal" style={styles.divider} />
+
+      <View style={{ marginVertical: 12 }}>
+        <Card containerStyle={styles.card}>
           <FlatList
             horizontal
             pagingEnabled
-            style={{ width: width, height: 200 }}
             data={purchase.product.photos}
             keyExtractor={(item) => item.url}
+            style={{ width: width, height: 250 }}
+            showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => {
               return (
                 <Pressable
-                  style={{
-                    width: width,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderTopLeftRadius: 5,
-                    borderTopRightRadius: 5
-                  }}
                   onPress={() => {
                     navigation.navigate('FullScreen', {
                       photos: purchase.product.photos
                     });
                   }}
+                  style={styles.boxContent}
                 >
                   <Image
                     source={{ uri: item.url }}
-                    style={{
-                      width: width,
-                      height: height,
-                      borderTopLeftRadius: 5,
-                      borderTopRightRadius: 5
-                    }}
-                    PlaceholderContent={<ActivityIndicator />}
+                    style={{ width: width, height: height }}
+                    PlaceholderContent={
+                      <ActivityIndicator size="large" color="#957765" />
+                    }
                     resizeMode={'contain'}
                   />
                 </Pressable>
@@ -76,42 +63,130 @@ const PurchaseDetails = ({ route, navigation }) => {
         </Card>
       </View>
 
-      <View>
+      <View style={{ marginHorizontal: 5 }}>
         <View>
-          <Text>Comprador:</Text>
-          <Text>{purchase.buyer.name}</Text>
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Comprador:</Text>
+            <Text style={styles.textValue}>{purchase.buyer.name}</Text>
+          </View>
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Correo:</Text>
+            <Text style={styles.textValue}>{purchase.buyer.email}</Text>
+          </View>
         </View>
-        <View>
-          <Text>Correo:</Text>
-          <Text>{purchase.buyer.email}</Text>
+
+        <View style={{ marginVertical: 15 }}>
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Producto:</Text>
+            <Text style={styles.textValue}>{purchase.product.name}</Text>
+          </View>
+
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Estado:</Text>
+            <Text style={styles.textValue}>{purchase.product.state}</Text>
+          </View>
+
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Cantidad:</Text>
+            <Text style={styles.textValue}>{purchase.quantity}</Text>
+          </View>
+
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Precio Unidad:</Text>
+            <Text style={styles.textValue}>${purchase.product.price}</Text>
+          </View>
+
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Precio Total:</Text>
+            <Text style={styles.textValue}>${purchase.totalPrice}</Text>
+          </View>
         </View>
+
         <View>
-          <Text>Producto:</Text>
-          <Text>{purchase.product.name}</Text>
-        </View>
-        <View>
-          <Text>Estado:</Text>
-          <Text>{purchase.product.state}</Text>
-        </View>
-        <View>
-          <Text>Cantidad:</Text>
-          <Text>{purchase.quantity}</Text>
-        </View>
-        <View>
-          <Text>Precio Unidad:</Text>
-          <Text>${purchase.product.price}</Text>
-        </View>
-        <View>
-          <Text>Precio Total:</Text>
-          <Text>${purchase.totalPrice}</Text>
-        </View>
-        <View>
-          <Text>Venta:</Text>
-          <Text>{purchase.buyDate}</Text>
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Venta:</Text>
+            <Text style={styles.textValue}>{purchase.buyDate}</Text>
+          </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F2F2F2'
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 12
+  },
+  iconsButton: {
+    borderColor: '#F2F2F2',
+    textAlignVertical: 'bottom',
+    borderWidth: 1
+  },
+  textTitle: {
+    fontSize: 22,
+    borderWidth: 1,
+    textAlignVertical: 'top',
+    fontFamily: 'Quicksand-Regular',
+    borderColor: '#F2F2F2',
+    marginLeft: 20
+  },
+  divider: {
+    width: '100%',
+    backgroundColor: '#787373',
+    borderWidth: 0.3,
+    marginTop: 0
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    marginTop: 12
+  },
+  textInitial: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Bold',
+    color: '#202020'
+  },
+  textSecond: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Bold',
+    color: '#D86767'
+  },
+  card: {
+    padding: 0,
+    borderWidth: 0,
+    margin: 0
+  },
+  boxContent: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  textLabel: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Bold',
+    color: '#202020'
+  },
+  textValue: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Regular',
+    color: '#626262'
+  },
+  textGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  }
+});
 
 export default PurchaseDetails;

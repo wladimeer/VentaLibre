@@ -1,7 +1,7 @@
 import Firebase from '../../../service/Firebase';
-import React, { useState, useEffect } from 'react';
 import DrawerSeller from '../../../components/DrawerSeller';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import React, { useState, useEffect } from 'react';
 import ProductsFiltered from './ProductsFiltered';
 import PurchaseDetails from './PurchaseDetails';
 import ProductDetails from './ProductDetails';

@@ -1,3 +1,4 @@
+import RutValidator from 'w2-rut-validator';
 import firebase from 'firebase/app';
 import moment from 'moment';
 import 'firebase/database';
@@ -21,18 +22,19 @@ const fireauth = firebase.auth;
 const firedata = firebase.database;
 const storage = firebase.storage;
 
-const userReference = firedata().ref('users');
+const ratingReference = firedata().ref('ratings');
 const purchaseReference = firedata().ref('purchases');
 const productReference = firedata().ref('products');
-const ratingReference = firedata().ref('ratings');
+const userReference = firedata().ref('users');
 
 const CreateUser = (object) => {
   return new Promise((resolve, reject) => {
     fireauth()
       .createUserWithEmailAndPassword(object.email, object.password)
       .then((response) => {
-        object.registerDate = moment().format('DD-MM-YYYY');
         (object.password = null), (object.uid = uid(32));
+        object.rut = RutValidator.format(object.rut.toUpperCase());
+        object.registerDate = moment().format('DD-MM-YYYY');
 
         userReference.push().set(object);
         resolve(object.type);

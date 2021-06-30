@@ -5,11 +5,9 @@ import PrincipalBuyer from './screen/private/buyer/PrincipalBuyer';
 import SignUpScreen from './screen/public/SignUpScreen';
 import SignInScreen from './screen/public/SignInScreen';
 import CreateScreen from './screen/public/CreateScreen';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import React from 'react';
 
-// const Stack = createStackNavigator();
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 const AuthScreens = () => {
   return (
@@ -37,9 +35,21 @@ const BuyerScreens = () => {
   );
 };
 
+const MyTheme = {
+  dark: false,
+  colors: {
+    card: 'transparent',
+    primary: 'transparent',
+    background: 'transparent',
+    notification: 'transparent',
+    border: 'transparent',
+    text: 'transparent'
+  }
+};
+
 const App = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="AuthScreens" component={AuthScreens} />
         <Stack.Screen name="SellerScreens" component={SellerScreens} />

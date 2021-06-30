@@ -1,13 +1,20 @@
-import { ScrollView, StyleSheet, Modal, View } from 'react-native';
+import { ScrollView, StyleSheet, Modal, View, Animated } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import React from 'react';
+import React, { useState } from 'react';
 
 const SelectItem = function (props) {
   const { options, visible, setSelectVisible, setFieldValue } = props;
+  const opacity = useState(new Animated.Value(0))[0];
+
+  Animated.timing(opacity, {
+    toValue: 1,
+    useNativeDriver: false,
+    duration: 280
+  }).start();
 
   return (
-    <Modal transparent={true} animationType="fade" visible={visible}>
-      <View style={styles.container}>
+    <Modal transparent={true} visible={visible}>
+      <Animated.View style={[styles.container, { opacity: opacity }]}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <View style={styles.contentData}>
             {options.map((option, index) => {
@@ -50,7 +57,7 @@ const SelectItem = function (props) {
             })}
           </View>
         </ScrollView>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };
@@ -58,28 +65,22 @@ const SelectItem = function (props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 5,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    justifyContent: 'center',
-    alignItems: 'center'
+    backgroundColor: 'rgba(0, 0, 0, 0.8)'
   },
   scrollView: {
     width: '100%'
   },
   contentData: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%'
+    flex: 1
   },
   listItemData: {
     width: '100%',
-    backgroundColor: '#2D2D30'
+    backgroundColor: '#F2F2F2'
   },
   label: {
     fontSize: 16,
-    fontFamily: 'Quicksand',
-    color: '#FFFFFF'
+    fontFamily: 'Quicksand-Regular',
+    color: '#353030'
   },
   separator: {
     height: 30

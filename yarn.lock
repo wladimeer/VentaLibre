@@ -7822,6 +7822,11 @@
   "resolved" "https://registry.npmjs.org/vlq/-/vlq-1.0.1.tgz"
   "version" "1.0.1"
 
+"w2-rut-validator@^1.3.2":
+  "integrity" "sha512-xA9f6oeuKL3TzCNEYwwN7gf1K92zHxrumavkdrmzPuRYXrOvbtjaODWR92tepOWBcupmPoYMTaYtjhHmCCOUDg=="
+  "resolved" "https://registry.npmjs.org/w2-rut-validator/-/w2-rut-validator-1.3.2.tgz"
+  "version" "1.3.2"
+
 "w3c-hr-time@^1.0.2":
   "integrity" "sha512-z8P5DvDNjKDoFIHK7q8r8lackT6l+jo/Ye3HOle7l9nICP9lf1Ci25fy9vHd0JOWewkIFzXIEig3TdKT7JQ5fQ=="
   "resolved" "https://registry.npmjs.org/w3c-hr-time/-/w3c-hr-time-1.0.2.tgz"

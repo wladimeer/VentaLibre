@@ -1,22 +1,16 @@
-import {
-  View,
-  Pressable,
-  Dimensions,
-  Animated,
-  StyleSheet,
-  StatusBar,
-  SafeAreaView
-} from 'react-native';
+import { Dimensions, Animated, StyleSheet } from 'react-native';
+import { View, Pressable, SafeAreaView } from 'react-native';
 import React, { useRef } from 'react';
+
+const { width, height } = Dimensions.get('screen');
 
 const FullScreen = ({ route, navigation }) => {
   const { photos } = route.params;
-  const { width, height } = Dimensions.get('screen');
+
   const scrollX = useRef(new Animated.Value(0)).current;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#000' }}>
-      <StatusBar hidden={false} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
       <View style={StyleSheet.absoluteFillObject}>
         {photos.map((photo, index) => {
           const opacity = scrollX.interpolate({
@@ -27,8 +21,8 @@ const FullScreen = ({ route, navigation }) => {
           return (
             <Animated.Image
               key={index}
-              source={{ uri: photo.url }}
               style={[StyleSheet.absoluteFillObject, { opacity }]}
+              source={{ uri: photo.url }}
               blurRadius={50}
             />
           );
@@ -37,32 +31,24 @@ const FullScreen = ({ route, navigation }) => {
       <Animated.FlatList
         horizontal
         pagingEnabled
+        data={photos}
+        showsHorizontalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
           { useNativeDriver: true }
         )}
-        data={photos}
         keyExtractor={(item) => item.url}
         renderItem={({ item }) => {
           return (
             <Pressable
-              style={{
-                width: width,
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
               onPress={() => {
                 navigation.goBack();
               }}
+              style={styles.content}
             >
               <Animated.Image
+                style={styles.image}
                 source={{ uri: item.url }}
-                style={{
-                  width: width - 20,
-                  height: height,
-                  maxWidth: width,
-                  borderRadius: 5
-                }}
                 resizeMode={'contain'}
               />
             </Pressable>
@@ -72,5 +58,20 @@ const FullScreen = ({ route, navigation }) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  content: {
+    width: width,
+    height: height,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  image: {
+    height: height,
+    maxWidth: width,
+    width: width - 20,
+    borderRadius: 2
+  }
+});
 
 export default FullScreen;

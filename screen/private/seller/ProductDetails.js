@@ -1,51 +1,37 @@
-import {
-  View,
-  Text,
-  Pressable,
-  FlatList,
-  Dimensions,
-  StatusBar,
-  ActivityIndicator,
-  SafeAreaView
-} from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { Dimensions, StyleSheet, FlatList } from 'react-native';
+import { Image, Card, Divider } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Image, Card } from 'react-native-elements';
-import AlertPro from 'react-native-alert-pro';
-import React, { useRef, useState } from 'react';
 import Firebase from '../../../service/Firebase';
+import React, { useRef, useState } from 'react';
+import AlertPro from 'react-native-alert-pro';
+
+const { width, height } = Dimensions.get('screen');
 
 const ProductDetails = ({ route, navigation }) => {
   const { product } = route.params;
-  const { width, height } = Dimensions.get('screen');
-  const message = useRef(null);
-  const warning = useRef(null);
+
   const [text, setText] = useState('');
 
-  return (
-    <SafeAreaView>
-      <StatusBar animated={true} backgroundColor="#000000" />
+  const message = useRef(null);
+  const warning = useRef(null);
 
+  return (
+    <View style={styles.container}>
       <AlertPro
         ref={message}
-        showCancel={false}
-        showConfirm={false}
         title="Atención"
+        customStyles={design.message}
+        showConfirm={false}
+        showCancel={false}
         message={text}
-        onConfirm={() => message.current.close()}
-        customStyles={{
-          mask: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
-          },
-          container: {
-            width: '80%',
-            shadowOpacity: 0.1,
-            shadowRadius: 10
-          }
-        }}
       />
 
       <AlertPro
         ref={warning}
+        title="Atención"
+        textCancel="CANCELAR"
+        textConfirm="ELIMINAR"
         onConfirm={() => {
           Firebase.DeleteProduct(product.uid)
             .then((response) => {
@@ -59,91 +45,61 @@ const ProductDetails = ({ route, navigation }) => {
             })
             .catch((response) => {
               setText(String(response));
-              warning.current.close();
-              message.current.open();
+              message.current.close();
+              warning.current.open();
             });
         }}
         onCancel={() => warning.current.close()}
-        title="Atención"
+        customStyles={design.options}
         message={text}
-        textConfirm="Eliminar"
-        textCancel="Cancelar"
-        customStyles={{
-          mask: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
-          },
-          container: {
-            width: '80%',
-            shadowOpacity: 0.1,
-            shadowRadius: 10
-          },
-          buttonConfirm: {
-            borderWidth: 2,
-            backgroundColor: 'transparent',
-            borderColor: '#1B1A7B'
-          },
-          buttonCancel: {
-            borderWidth: 2,
-            backgroundColor: 'transparent',
-            borderColor: '#E91212'
-          },
-          textConfirm: {
-            color: '#000000'
-          },
-          textCancel: {
-            color: '#000000'
-          }
-        }}
       />
 
-      <View>
+      <View style={styles.header}>
         <Pressable
           onPress={() => {
             navigation.replace('SellerScreens');
           }}
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons
+            size={24}
+            style={styles.iconsButton}
+            name="arrow-back"
+            color="black"
+          />
         </Pressable>
-        <Text>Detalle del Producto</Text>
+        <Text style={styles.textTitle}>Detalle del Producto</Text>
       </View>
 
-      <View>
-        <Text>{product.name}</Text>
-        <Text>${product.price}</Text>
+      <Divider orientation="horizontal" style={styles.divider} />
+
+      <View style={styles.content}>
+        <Text style={styles.textInitial}>{product.name}</Text>
+        <Text style={styles.textSecond}>${product.price}</Text>
       </View>
 
-      <View>
-        <Card containerStyle={{ borderRadius: 5, padding: 0 }}>
+      <View style={{ marginVertical: 20 }}>
+        <Card containerStyle={styles.card}>
           <FlatList
             horizontal
             pagingEnabled
-            style={{ width: width, height: 200 }}
             data={product.photos}
             keyExtractor={(item) => item.url}
+            style={{ width: width, height: 250 }}
+            showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => {
               return (
                 <Pressable
-                  style={{
-                    width: width,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderTopLeftRadius: 5,
-                    borderTopRightRadius: 5
-                  }}
                   onPress={() => {
                     navigation.navigate('FullScreen', { photos: product.photos });
                   }}
+                  style={styles.boxContent}
                 >
                   <Image
                     source={{ uri: item.url }}
-                    style={{
-                      width: width,
-                      height: height,
-                      borderTopLeftRadius: 5,
-                      borderTopRightRadius: 5
-                    }}
-                    PlaceholderContent={<ActivityIndicator />}
+                    style={{ width: width, height: height }}
+                    PlaceholderContent={
+                      <ActivityIndicator size="large" color="#957765" />
+                    }
                     resizeMode={'contain'}
                   />
                 </Pressable>
@@ -153,41 +109,208 @@ const ProductDetails = ({ route, navigation }) => {
         </Card>
       </View>
 
-      <View>
-        <Text>{product.description}</Text>
-        <View>
-          <Text>Publicación:</Text>
-          <Text>{product.creationDate}</Text>
-        </View>
-        <View>
-          <Text>Estado:</Text>
-          <Text>{product.state}</Text>
-        </View>
-        <View>
-          <Text>Cantidad:</Text>
-          <Text>{product.quantity}</Text>
+      <View style={{ marginHorizontal: 5 }}>
+        <Text style={styles.textValue}>{product.description}</Text>
+        <View style={{ marginVertical: 15 }}>
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Publicación:</Text>
+            <Text style={styles.textValue}>{product.creationDate}</Text>
+          </View>
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Estado:</Text>
+            <Text style={styles.textValue}>{product.state}</Text>
+          </View>
+          <View style={styles.textGroup}>
+            <Text style={styles.textLabel}>Cantidad:</Text>
+            <Text style={styles.textValue}>
+              {product.quantity != 1
+                ? `${product.quantity} Unidades`
+                : `${product.quantity} Unidad`}
+            </Text>
+          </View>
         </View>
       </View>
 
-      <View>
+      <View style={styles.buttonGroup}>
         <Pressable
           onPress={() => {
             navigation.navigate('UpdateProduct', { product: product });
           }}
+          style={({ pressed }) => [
+            { backgroundColor: pressed ? '#957765' : '#A17E68' },
+            styles.button
+          ]}
         >
-          <Text>ACTUALIZAR</Text>
+          <Text style={styles.textButton}>ACTUALIZAR</Text>
         </Pressable>
         <Pressable
           onPress={() => {
             setText('¿Seguro que Quieres Eliminar Este Producto?');
             warning.current.open();
           }}
+          style={({ pressed }) => [
+            { backgroundColor: pressed ? '#957765' : '#A17E68' },
+            styles.button
+          ]}
         >
-          <Text>ELIMINAR</Text>
+          <Text style={styles.textButton}>ELIMINAR</Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </View>
   );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F2F2F2'
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 12
+  },
+  iconsButton: {
+    borderColor: '#F2F2F2',
+    textAlignVertical: 'bottom',
+    borderWidth: 1
+  },
+  textTitle: {
+    fontSize: 22,
+    borderWidth: 1,
+    textAlignVertical: 'top',
+    fontFamily: 'Quicksand-Regular',
+    borderColor: '#F2F2F2',
+    marginLeft: 20
+  },
+  divider: {
+    width: '100%',
+    backgroundColor: '#787373',
+    borderWidth: 0.3,
+    marginTop: 0
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    marginTop: 12
+  },
+  textInitial: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Bold',
+    color: '#202020'
+  },
+  textSecond: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Bold',
+    color: '#D86767'
+  },
+  card: {
+    padding: 0,
+    borderWidth: 0,
+    margin: 0
+  },
+  boxContent: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  textLabel: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Bold',
+    color: '#202020'
+  },
+  textValue: {
+    fontSize: 15,
+    fontFamily: 'Quicksand-Regular',
+    color: '#626262'
+  },
+  textGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  buttonGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 5
+  },
+  button: {
+    width: '45%',
+    borderRadius: 2,
+    minWidth: 120,
+    marginTop: 30,
+    padding: 9
+  },
+  textButton: {
+    color: '#FFFFFF',
+    fontFamily: 'Quicksand-Regular',
+    textAlignVertical: 'top',
+    textAlign: 'center',
+    fontSize: 15
+  }
+});
+
+const design = {
+  options: {
+    mask: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    },
+    container: {
+      width: '80%',
+      shadowOpacity: 0.1,
+      shadowRadius: 10
+    },
+    title: {
+      fontFamily: 'Quicksand-SemiBold'
+    },
+    message: {
+      fontFamily: 'Quicksand-Regular'
+    },
+    buttonConfirm: {
+      backgroundColor: '#E91212',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 2
+    },
+    buttonCancel: {
+      backgroundColor: '#FBBA12',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 2
+    },
+    textConfirm: {
+      color: '#FFFFFF',
+      fontFamily: 'Quicksand-Regular',
+      fontSize: 15
+    },
+    textCancel: {
+      color: '#FFFFFF',
+      fontFamily: 'Quicksand-Regular',
+      fontSize: 15
+    }
+  },
+  message: {
+    mask: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    },
+    container: {
+      width: '80%',
+      shadowOpacity: 0.1,
+      shadowRadius: 10
+    },
+    title: {
+      fontFamily: 'Quicksand-SemiBold'
+    },
+    message: {
+      fontFamily: 'Quicksand-Regular'
+    }
+  }
 };
 
 export default ProductDetails;

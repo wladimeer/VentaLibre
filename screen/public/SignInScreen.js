@@ -1,34 +1,43 @@
-import { SafeAreaView, StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { ScrollView, Pressable, View, Text, TextInput } from 'react-native';
+import { Keyboard, StatusBar, StyleSheet, Dimensions } from 'react-native';
 import React, { useRef, useState } from 'react';
+import { Divider } from 'react-native-elements';
 import AlertPro from 'react-native-alert-pro';
 import Firebase from '../../service/Firebase';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+
+const { width } = Dimensions.get('screen');
 
 const SignInScreen = ({ navigation }) => {
   const [text, setText] = useState('');
 
-  const [state, setState] = useState(false);
-
   const message = useRef(null);
   const warning = useRef(null);
+
+  const passwordReference = useRef(null);
+  const emailReference = useRef(null);
 
   const LoginSchema = yup.object().shape({
     email: yup
       .string()
       .nullable(true)
-      .email('El correo debe tener un formato valido')
-      .required('Ingresar un correo valido para continuar'),
+      .required('Ingresa un correo valido para continuar.'),
     password: yup
       .string()
       .nullable(true)
-      .min(6, 'La contraseña debe tener 6 caracteres minimo')
-      .required('Ingresar una contraseña para continuar')
+      .required('Ingresa una contraseña para continuar.')
   });
 
-  const { values, setFieldValue, handleSubmit, errors, resetForm } = useFormik({
+  const {
+    values,
+    setFieldValue,
+    setFieldTouched,
+    handleSubmit,
+    resetForm,
+    touched,
+    errors
+  } = useFormik({
     initialValues: {
       email: '',
       password: ''
@@ -39,17 +48,19 @@ const SignInScreen = ({ navigation }) => {
         .then((response) => {
           setText('Iniciando Sesión...');
           message.current.open();
-          setState(true);
 
           setTimeout(() => {
             message.current.close();
 
-            if (String(response) == 'Vendedor') {
-              navigation.replace('SellerScreens');
-            } else {
-              navigation.replace('BuyerScreens');
+            switch (String(response)) {
+              case 'Vendedor':
+                navigation.replace('SellerScreens');
+                break;
+              case 'Comprador':
+                navigation.replace('BuyerScreens');
+                break;
             }
-          }, 2000);
+          }, 2200);
         })
         .catch((response) => {
           setText(String(response));
@@ -60,111 +71,223 @@ const SignInScreen = ({ navigation }) => {
   });
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: '#8E8887' }}
-      pointerEvents={state ? 'none' : 'auto'}
-    >
-      <StatusBar animated={true} backgroundColor={'#000000'} />
+    <View style={{ flex: 1, backgroundColor: '#F2F2F2' }} pointerEvents={'auto'}>
+      <StatusBar barStyle="light-content" backgroundColor="#000" animated={true} />
 
       <AlertPro
         ref={message}
-        showCancel={false}
-        showConfirm={false}
         title="Atención"
+        customStyles={design.message}
+        showConfirm={false}
+        showCancel={false}
         message={text}
-        onConfirm={() => message.current.close()}
-        customStyles={{
-          mask: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
-          },
-          container: {
-            width: '80%',
-            shadowOpacity: 0.1,
-            shadowRadius: 10
-          }
-        }}
       />
 
       <AlertPro
         ref={warning}
-        onConfirm={() => warning.current.close()}
         title="Atención"
+        textConfirm="ENTIENDO"
+        onConfirm={() => warning.current.close()}
+        customStyles={design.warning}
         showCancel={false}
         message={text}
-        textConfirm="Entiendo"
-        customStyles={{
-          mask: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
-          },
-          container: {
-            width: '80%',
-            shadowOpacity: 0.1,
-            shadowRadius: 10
-          },
-          buttonConfirm: {
-            borderWidth: 2,
-            backgroundColor: 'transparent',
-            borderColor: '#1B1A7B'
-          },
-          textConfirm: {
-            color: '#000000'
-          }
-        }}
       />
 
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Text>VentaLibre</Text>
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.content}>
+            <Text style={styles.textTitle}>VentaLibre</Text>
 
-        <View>
-          <Text>Correo</Text>
-          <TextInput
-            onChangeText={(value) => {
-              setFieldValue('email', value);
-            }}
-            keyboardType={'email-address'}
-            selectionColor={'#686565'}
-            value={values.email}
-          />
-          <Text>{errors.email ? errors.email : ''}</Text>
-        </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.textLabel}>Correo</Text>
+              <TextInput
+                ref={emailReference}
+                style={styles.textInput}
+                onChangeText={(value) => {
+                  setFieldValue('email', value);
+                }}
+                onBlur={() => {
+                  setFieldTouched('email');
+                }}
+                onSubmitEditing={() => {
+                  passwordReference.current.focus();
+                }}
+                keyboardType={'email-address'}
+                selectionColor={'#686565'}
+                returnKeyType="next"
+                value={values.email}
+                blurOnSubmit={false}
+              />
+              <Text style={(styles.textLabel, { color: '#FF5757' })}>
+                {touched.email && errors.email ? errors.email : ''}
+              </Text>
+            </View>
 
-        <View>
-          <Text>Constraseña</Text>
-          <TextInput
-            onChangeText={(value) => {
-              setFieldValue('password', value);
-            }}
-            selectionColor={'#686565'}
-            keyboardType={'default'}
-            value={values.password}
-            secureTextEntry={true}
-          />
-          <Text>{errors.password ? errors.password : ''}</Text>
-        </View>
+            <Divider orientation="horizontal" style={styles.divider} />
 
-        <Pressable
-          style={({ pressed }) => [
-            { backgroundColor: pressed ? 'rgba(0, 0, 0, 0.1)' : 'transparent' }
-          ]}
-          onPress={() => handleSubmit()}
-        >
-          <Text>Iniciar Sesión</Text>
-        </Pressable>
+            <View style={styles.inputGroup}>
+              <Text style={styles.textLabel}>Constraseña</Text>
+              <TextInput
+                ref={passwordReference}
+                style={styles.textInput}
+                onChangeText={(value) => {
+                  setFieldValue('password', value);
+                }}
+                onBlur={() => {
+                  setFieldTouched('password');
+                }}
+                onSubmitEditing={() => {
+                  Keyboard.dismiss();
+                  handleSubmit();
+                }}
+                selectionColor={'#686565'}
+                keyboardType={'default'}
+                value={values.password}
+                secureTextEntry={true}
+                returnKeyType="go"
+              />
+              <Text style={(styles.textLabel, { color: '#FF5757' })}>
+                {touched.password && errors.password ? errors.password : ''}
+              </Text>
+            </View>
 
-        <View>
-          <Text
-            onPress={() => {
-              navigation.navigate('SignUpScreen');
-            }}
-          >
-            ¿No tienes una cuenta? Crear Cuenta
-          </Text>
+            <Pressable
+              style={({ pressed }) => [
+                { backgroundColor: pressed ? '#957765' : '#A17E68' },
+                styles.button
+              ]}
+              onPress={() => handleSubmit()}
+            >
+              <Text style={styles.textButton}>INICIAR SESIÓN</Text>
+            </Pressable>
+
+            <View>
+              <Text
+                onPress={() => {
+                  navigation.navigate('SignUpScreen');
+                }}
+                style={styles.textFooter}
+              >
+                ¿No tienes una cuenta? Crear Cuenta
+              </Text>
+            </View>
+          </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: '#F2F2F2',
+    alignItems: 'center'
+  },
+  content: {
+    width: width - width * 0.15
+  },
+  textTitle: {
+    color: '#353030',
+    fontFamily: 'GreatVibes-Regular',
+    textAlign: 'center',
+    marginBottom: 30,
+    marginTop: 10,
+    fontSize: 40
+  },
+  textLabel: {
+    color: '#353030',
+    fontFamily: 'Quicksand-Regular',
+    marginBottom: 3,
+    fontSize: 14
+  },
+  textInput: {
+    width: '100%',
+    color: '#5C5757',
+    borderColor: '#A17E68',
+    fontFamily: 'Quicksand-SemiBold',
+    paddingHorizontal: 5,
+    borderRadius: 2,
+    borderWidth: 2,
+    fontSize: 14,
+    padding: 2
+  },
+  inputGroup: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'flex-start'
+  },
+  button: {
+    width: '100%',
+    borderRadius: 2,
+    marginTop: 30,
+    padding: 9
+  },
+  textButton: {
+    color: '#FFFFFF',
+    fontFamily: 'Quicksand-Regular',
+    textAlign: 'center',
+    fontSize: 15
+  },
+  textFooter: {
+    color: '#626262',
+    fontFamily: 'Quicksand-Regular',
+    textAlign: 'center',
+    fontSize: 13,
+    margin: 20
+  },
+  divider: {
+    width: '100%',
+    backgroundColor: 'transparent',
+    paddingVertical: 10
+  }
+});
+
+const design = {
+  warning: {
+    mask: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    },
+    container: {
+      width: '80%',
+      shadowOpacity: 0.1,
+      shadowRadius: 10
+    },
+    title: {
+      fontFamily: 'Quicksand-SemiBold'
+    },
+    message: {
+      fontFamily: 'Quicksand-Regular'
+    },
+    buttonConfirm: {
+      backgroundColor: '#957765',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 2
+    },
+    textConfirm: {
+      color: '#FFFFFF',
+      fontFamily: 'Quicksand-Regular',
+      fontSize: 15
+    }
+  },
+  message: {
+    mask: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    },
+    container: {
+      width: '80%',
+      shadowOpacity: 0.1,
+      shadowRadius: 10
+    },
+    title: {
+      fontFamily: 'Quicksand-SemiBold'
+    },
+    message: {
+      fontFamily: 'Quicksand-Regular'
+    }
+  }
+};
 
 export default SignInScreen;

@@ -6165,6 +6165,11 @@
     "ansi-styles" "^4.0.0"
     "react-is" "^17.0.1"
 
+"price-text-format@^1.0.2":
+  "integrity" "sha512-ICN+VBJzZ9GcoKpsUAP+wrW7/JpmhGFyG+Ni802SpC7QKtO/LkBcDVpaLA3Vdhqjh9dnnHJns1M06kFVWsKASg=="
+  "resolved" "https://registry.npmjs.org/price-text-format/-/price-text-format-1.0.2.tgz"
+  "version" "1.0.2"
+
 "process-nextick-args@~2.0.0":
   "integrity" "sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag=="
   "resolved" "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz"

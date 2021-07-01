@@ -36,7 +36,7 @@ const ViewSales = ({ navigation }) => {
 
       <Divider orientation="horizontal" style={styles.divider} />
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexDirection: 'column-reverse' }}>
         {list.length > 0 ? (
           list.map((sales, index) => {
             return (

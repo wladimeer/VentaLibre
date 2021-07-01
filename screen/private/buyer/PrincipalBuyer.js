@@ -1,18 +1,18 @@
+import Firebase from '../../../service/Firebase';
+import React, { useState, useEffect } from 'react';
 import DrawerBuyer from '../../../components/DrawerBuyer';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Firebase from '../../../service/Firebase';
-import ViewProducts from './ViewProducts';
-import React, { useState, useEffect } from 'react';
-import FullScreen from './FullScreen';
-import ReduceProducts from './ReduceProducts';
-import ProductDetails from './ProductDetails';
-import ProductsFiltered from './ProductsFiltered';
 import PurchaseVerification from './PurchaseVerification';
 import QuantitySelection from './QuantitySelection';
-import RealizePurchase from './RealizePurchase';
 import PurchaseCompleted from './PurchaseCompleted';
-import ViewPurchases from './ViewPurchases';
+import ProductsFiltered from './ProductsFiltered';
+import RealizePurchase from './RealizePurchase';
 import PurchaseDetails from './PurchaseDetails';
+import ReduceProducts from './ReduceProducts';
+import ProductDetails from './ProductDetails';
+import ViewPurchases from './ViewPurchases';
+import ViewProducts from './ViewProducts';
+import FullScreen from './FullScreen';
 import About from './About';
 
 const PrincipalBuyer = ({ navigation }) => {

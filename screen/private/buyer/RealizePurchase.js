@@ -1,35 +1,37 @@
-import {
-  SafeAreaView,
-  View,
-  Text,
-  Pressable,
-  ActivityIndicator
-} from 'react-native';
-import { WebView } from 'react-native-webview';
-import { WebpayPlus } from 'transbank-sdk';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
-import AlertPro from 'react-native-alert-pro';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { WebpayPlus, Environment } from 'transbank-sdk';
 import Firebase from '../../../service/Firebase';
-// const Transbank = require('transbank-sdk').WebpayPlus;
+import { Divider } from 'react-native-elements';
+import { WebView } from 'react-native-webview';
+import AlertPro from 'react-native-alert-pro';
 
 const RealizePurchase = ({ route, navigation }) => {
   const { user, purchase, commerce, product } = route.params;
-  const [response, setResponse] = useState({ token: '', url: '' });
-  const [state, setState] = useState(false);
-  const [finish, setFinish] = useState(false);
-  const message = useRef(null);
+
   const [text, setText] = useState('');
+  const [finish, setFinish] = useState(false);
+  const [state, setState] = useState(false);
+
+  const [response, setResponse] = useState({ token: '', url: '' });
+
+  const warning = useRef(null);
+
   const compare = {
-    url: 'https://webpay3gint.transbank.cl/webpayserver/auth_emisor.cgi',
-    url2: 'https://webpay3gint.transbank.cl/webpayserver/dist/#',
-    title: 'Pago Seguro WebPay'
+    finish: 'https://webpay3gint.transbank.cl/webpayserver/auth_emisor.cgi',
+    return: 'https://webpay3gint.transbank.cl/webpayserver/dist/#',
+    ready: 'Pago Seguro WebPay'
   };
 
   useEffect(async () => {
+    WebpayPlus.apiKey = commerce.key;
+    WebpayPlus.commerceCode = commerce.code;
+    WebpayPlus.environment = Environment.Integration;
+
     const response = await WebpayPlus.Transaction.create(
-      'S' + String(Math.floor(Math.random() * 9999999)),
-      'O' + String(Math.floor(Math.random() * 9999999)),
+      `O${String(Math.floor(Math.random() * 9999999))}`,
+      `S${String(Math.floor(Math.random() * 9999999))}`,
       purchase.totalPrice,
       'https://www.google.com'
     );
@@ -41,68 +43,89 @@ const RealizePurchase = ({ route, navigation }) => {
   }, []);
 
   if (finish) {
-    WebpayPlus.Transaction.commit(response.token).then((response) => {
-      if (response.status == 'AUTHORIZED') {
-        Firebase.CreatePurchase({
-          product: product,
-          totalPrice: purchase.totalPrice,
-          quantity: purchase.quantity,
-          seller: user
-        })
-          .then((response) => {
-            navigation.navigate('PurchaseCompleted', {
-              product: product,
-              purchase: purchase,
-              seller: user
-            });
-          })
-          .catch((response) => {
-            setText(String(response));
-            message.current.open();
+    WebpayPlus.Transaction.status(response.token).then((result) => {
+      switch (result.vci) {
+        case 'TSY':
+          WebpayPlus.Transaction.commit(response.token).then((response) => {
+            switch (response.status) {
+              case 'AUTHORIZED':
+                Firebase.CreatePurchase({
+                  product: product,
+                  totalPrice: purchase.totalPrice,
+                  quantity: purchase.quantity,
+                  seller: user
+                })
+                  .then((response) => {
+                    navigation.navigate('PurchaseCompleted', {
+                      seller: user
+                    });
+                  })
+                  .catch((response) => {
+                    setText(String(response));
+                    warning.current.open();
+                  });
+                break;
+              case 'FAILED':
+                if (text == '') {
+                  setText('La Tarjeta Ingresada fue Declinada!');
+                  warning.current.open();
+                  break;
+                }
+            }
           });
+          break;
+        case 'TSN':
+          if (text == '') {
+            setText('El Pago no Pudo Ser Completado!');
+            warning.current.open();
+            break;
+          }
       }
     });
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: '#F2F2F2' }}>
       <AlertPro
-        ref={message}
-        showCancel={false}
-        showConfirm={false}
+        ref={warning}
         title="Atención"
-        message={text}
-        onConfirm={() => message.current.close()}
-        customStyles={{
-          mask: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
-          },
-          container: {
-            width: '80%',
-            shadowOpacity: 0.1,
-            shadowRadius: 10
-          }
+        textConfirm="VOLVER A PRODUCTOS"
+        onConfirm={() => {
+          warning.current.close();
+
+          setTimeout(() => {
+            navigation.replace('BuyerScreens');
+          }, 500);
         }}
+        customStyles={design.warning}
+        showCancel={false}
+        message={text}
       />
 
-      <View>
+      <View style={styles.header}>
         <Pressable
           onPress={() => {
             navigation.replace('BuyerScreens');
           }}
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons
+            size={24}
+            name="arrow-back"
+            style={styles.iconsButton}
+            color="black"
+          />
         </Pressable>
-        <Text>Comprando con Webpay</Text>
+        <Text style={styles.textTitle}>Completa tu Compra</Text>
       </View>
+
+      <Divider orientation="horizontal" style={styles.divider} />
+
       <View style={{ flex: 1 }}>
         {!finish ? (
           <>
             {!state ? (
-              <View
-                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-              >
-                <ActivityIndicator size="large" color="#00ff00" />
+              <View style={styles.indicator}>
+                <ActivityIndicator size="large" color="#957765" />
               </View>
             ) : null}
             <WebView
@@ -120,26 +143,95 @@ const RealizePurchase = ({ route, navigation }) => {
               `
               }}
               onNavigationStateChange={(value) => {
-                if (value.title == compare.title) {
+                if (value.title == compare.ready) {
                   setState(true);
+                  return;
                 }
 
-                if (value.url == compare.url2) {
+                if (value.url == compare.return) {
                   navigation.replace('BuyerScreens');
                 }
 
-                if (value.url == compare.url) {
+                if (value.url == compare.finish) {
                   setFinish(true);
+                  return;
                 }
               }}
             />
           </>
         ) : (
-          <ActivityIndicator size="large" color="#00ff00" />
+          <View style={styles.indicator}>
+            <ActivityIndicator size="large" color="#957765" />
+          </View>
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 12
+  },
+  iconsButton: {
+    borderColor: '#F2F2F2',
+    textAlignVertical: 'bottom',
+    borderWidth: 1
+  },
+  textTitle: {
+    fontSize: 22,
+    borderWidth: 1,
+    textAlignVertical: 'top',
+    fontFamily: 'Quicksand-Regular',
+    borderColor: '#F2F2F2',
+    marginLeft: 20
+  },
+  divider: {
+    width: '100%',
+    backgroundColor: '#787373',
+    borderWidth: 0.3,
+    marginTop: 0
+  },
+  indicator: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%'
+  }
+});
+
+const design = {
+  warning: {
+    mask: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    },
+    container: {
+      width: '80%',
+      shadowOpacity: 0.1,
+      shadowRadius: 10
+    },
+    title: {
+      fontFamily: 'Quicksand-SemiBold'
+    },
+    message: {
+      fontFamily: 'Quicksand-Regular'
+    },
+    buttonConfirm: {
+      backgroundColor: '#957765',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 2
+    },
+    textConfirm: {
+      color: '#FFFFFF',
+      fontFamily: 'Quicksand-Regular',
+      fontSize: 15
+    }
+  }
 };
 
 export default RealizePurchase;

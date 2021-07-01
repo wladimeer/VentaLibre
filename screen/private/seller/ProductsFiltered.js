@@ -29,7 +29,7 @@ const ProductFiltered = ({ route, navigation }) => {
 
       <Divider orientation="horizontal" style={styles.divider} />
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexDirection: 'column-reverse' }}>
         {products.length > 0 ? (
           products.map((product, index) => {
             return (

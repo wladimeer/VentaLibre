@@ -71,7 +71,7 @@ const ViewProducts = ({ navigation }) => {
 
       <Divider orientation="horizontal" style={styles.divider} />
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexDirection: 'column-reverse' }}>
         {find.length > 0 ? (
           find.map((product, index) => {
             return (

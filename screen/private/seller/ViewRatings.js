@@ -1,7 +1,7 @@
-import { View, Text, Pressable } from 'react-native';
 import { ScrollView, Dimensions, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Divider, Card } from 'react-native-elements';
+import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Firebase from '../../../service/Firebase';
 
@@ -36,7 +36,7 @@ const ViewRatings = ({ navigation }) => {
 
       <Divider orientation="horizontal" style={styles.divider} />
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexDirection: 'column-reverse' }}>
         {list.length > 0 ? (
           <View style={styles.container}>
             {list.map((rating, index) => {

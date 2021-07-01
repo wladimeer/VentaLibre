@@ -1,5 +1,5 @@
 import { Dimensions, Animated, StyleSheet } from 'react-native';
-import { View, Pressable, SafeAreaView } from 'react-native';
+import { View, Pressable } from 'react-native';
 import React, { useRef } from 'react';
 
 const { width, height } = Dimensions.get('screen');
@@ -10,7 +10,7 @@ const FullScreen = ({ route, navigation }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
+    <View style={{ flex: 1, backgroundColor: '#000000' }}>
       <View style={StyleSheet.absoluteFillObject}>
         {photos.map((photo, index) => {
           const opacity = scrollX.interpolate({
@@ -55,14 +55,14 @@ const FullScreen = ({ route, navigation }) => {
           );
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   content: {
     width: width,
-    height: height,
+    height: height - 20,
     justifyContent: 'center',
     alignItems: 'center'
   },

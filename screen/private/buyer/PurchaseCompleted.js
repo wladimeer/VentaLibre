@@ -90,6 +90,7 @@ const PurchaseCompleted = ({ route, navigation }) => {
           ratingColor="#FFCA28"
           style={{ paddingVertical: 10 }}
           onFinishRating={(value) => {
+            console.log(value);
             setRating(value);
           }}
           startingValue={0}

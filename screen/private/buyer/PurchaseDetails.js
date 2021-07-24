@@ -98,7 +98,7 @@ const PurchaseDetails = ({ route, navigation }) => {
         </View>
         <View>
           <View style={styles.textGroup}>
-            <Text style={styles.textLabel}>Venta:</Text>
+            <Text style={styles.textLabel}>Compra:</Text>
             <Text style={styles.textValue}>{purchase.buyDate}</Text>
           </View>
         </View>

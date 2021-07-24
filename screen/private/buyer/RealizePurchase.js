@@ -1,7 +1,6 @@
 import { StyleSheet, View, Text, Pressable, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { WebpayPlus, Environment } from 'transbank-sdk';
 import Firebase from '../../../service/Firebase';
 import { Divider } from 'react-native-elements';
 import { WebView } from 'react-native-webview';
@@ -19,69 +18,79 @@ const RealizePurchase = ({ route, navigation }) => {
   const warning = useRef(null);
 
   const compare = {
+    return: 'https://www.google.com/',
     finish: 'https://webpay3gint.transbank.cl/webpayserver/auth_emisor.cgi',
-    return: 'https://webpay3gint.transbank.cl/webpayserver/dist/#',
     ready: 'Pago Seguro WebPay'
   };
 
-  useEffect(async () => {
-    WebpayPlus.apiKey = commerce.key;
-    WebpayPlus.commerceCode = commerce.code;
-    WebpayPlus.environment = Environment.Integration;
-
-    const response = await WebpayPlus.Transaction.create(
-      `O${String(Math.floor(Math.random() * 9999999))}`,
-      `S${String(Math.floor(Math.random() * 9999999))}`,
-      purchase.totalPrice,
-      'https://www.google.com'
-    );
-
-    setResponse({
-      token: response.token,
-      url: response.url
-    });
+  useEffect(() => {
+    fetch('https://transbank-service.herokuapp.com/create', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ purchase: { totalPrice: 15000 } })
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((value) => {
+            setResponse({
+              token: value.token,
+              url: value.url
+            });
+          });
+        }
+      })
+      .catch((response) => {
+        setText('Transbank Dejo de Funcionar!');
+        warning.current.open();
+        return;
+      });
   }, []);
 
   if (finish) {
-    WebpayPlus.Transaction.status(response.token).then((result) => {
-      switch (result.vci) {
-        case 'TSY':
-          WebpayPlus.Transaction.commit(response.token).then((response) => {
-            switch (response.status) {
-              case 'AUTHORIZED':
-                Firebase.CreatePurchase({
-                  product: product,
-                  totalPrice: purchase.totalPrice,
-                  quantity: purchase.quantity,
-                  seller: user
+    fetch('https://transbank-service.herokuapp.com/status', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value: { token: response.token } })
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((value) => {
+            if (value.success != null) {
+              Firebase.CreatePurchase({
+                product: product,
+                totalPrice: purchase.totalPrice,
+                quantity: purchase.quantity,
+                seller: user
+              })
+                .then((response) => {
+                  navigation.navigate('PurchaseCompleted', {
+                    seller: user
+                  });
                 })
-                  .then((response) => {
-                    navigation.navigate('PurchaseCompleted', {
-                      seller: user
-                    });
-                  })
-                  .catch((response) => {
+                .catch((response) => {
+                  if (text == '') {
                     setText(String(response));
                     warning.current.open();
-                  });
-                break;
-              case 'FAILED':
-                if (text == '') {
-                  setText('La Tarjeta Ingresada fue Declinada!');
-                  warning.current.open();
-                  break;
-                }
+                    return;
+                  }
+                });
+            }
+
+            if (value.error != null) {
+              if (text == '') {
+                setText(String(value.error));
+                warning.current.open();
+                return;
+              }
             }
           });
-          break;
-        case 'TSN':
-          if (text == '') {
-            setText('El Pago no Pudo Ser Completado!');
-            warning.current.open();
-            break;
-          }
-      }
-    });
+        }
+      })
+      .catch((response) => {
+        setText('Transbank Dejo de Funcionar!');
+        warning.current.open();
+        return;
+      });
   }
 
   return (
@@ -150,6 +159,7 @@ const RealizePurchase = ({ route, navigation }) => {
 
                 if (value.url == compare.return) {
                   navigation.replace('BuyerScreens');
+                  return;
                 }
 
                 if (value.url == compare.finish) {

@@ -70,7 +70,7 @@ const ViewPurchases = ({ navigation }) => {
           })
         ) : (
           <View style={styles.information}>
-            <Text style={{ color: '#626262' }}>No Se Encontraron Ventas</Text>
+            <Text style={{ color: '#626262' }}>No Se Encontraron Compras</Text>
           </View>
         )}
       </ScrollView>

@@ -27,6 +27,12 @@ const purchaseReference = firedata().ref('purchases');
 const productReference = firedata().ref('products');
 const userReference = firedata().ref('users');
 
+/**
+ * Método que sirve para registrar un usuario en firebase
+ * @param {*} object Recibe los datos del usuario en un objeto json
+ * @returns Retorna el tipo de usuario si se registra correctamente y un mensaje si hay un error
+ */
+
 const CreateUser = (object) => {
   return new Promise((resolve, reject) => {
     fireauth()
@@ -61,6 +67,12 @@ const CreateUser = (object) => {
   });
 };
 
+/**
+ * Método que sirve para iniciar sesión en el sistema
+ * @param {*} object Recibe el correo y la contraseña dentro de un objeto json
+ * @returns Retorna el tipo de usuario si inicia sesión correctamente y un mensaje si hay un error
+ */
+
 const LoginUser = (object) => {
   return new Promise((resolve, reject) => {
     fireauth()
@@ -92,6 +104,12 @@ const LoginUser = (object) => {
   });
 };
 
+/**
+ * Método que sirve para buscar un usuario vendedor
+ * @param {*} value Recibe el uid del usuario vendedor
+ * @returns Retorna el usuario mas la calificación si posee
+ */
+
 const FindUser = (value) => {
   return new Promise((resolve, reject) => {
     userReference.on('value', (snapshot) => {
@@ -106,6 +124,12 @@ const FindUser = (value) => {
   });
 };
 
+/**
+ * Método que sirve para buscar un usuario en la base de datos
+ * @param {*} value Recibe el correo del usuario a buscar
+ * @returns Retorna los datos del usuario en un objeto json si existe
+ */
+
 const SearchUser = (value) => {
   return new Promise((resolve, reject) => {
     userReference.on('value', (response) => {
@@ -117,6 +141,11 @@ const SearchUser = (value) => {
     });
   });
 };
+
+/**
+ * Método que sirve para obtener los datos del usuario que inicio sesión
+ * @returns Retorna los datos del usuario actual en un objeto json
+ */
 
 const CurrentUser = () => {
   return new Promise((resolve, reject) => {
@@ -130,9 +159,19 @@ const CurrentUser = () => {
   });
 };
 
+/**
+ * Método que sirve para cerrar sesión en el sistema
+ */
+
 const LogoutUser = () => {
   firebase.auth().signOut();
 };
+
+/**
+ * Método que sirve para registrar un producto en firebase
+ * @param {*} object Recibe los datos del producto en un objeto json
+ * @returns Retorna un mensaje indicando el resultado obtenido
+ */
 
 const CreateProduct = (object) => {
   return new Promise((resolve, reject) => {
@@ -166,6 +205,11 @@ const CreateProduct = (object) => {
   });
 };
 
+/**
+ * Método que sirve para obtener todos los productos publicados
+ * @returns Retorna todos los productos publicados
+ */
+
 const ReadProducts = () => {
   return new Promise((resolve, reject) => {
     const array = [];
@@ -180,11 +224,11 @@ const ReadProducts = () => {
   });
 };
 
-// /**
-//  * Esta función actualiza un producto recibiendo como parametro el id de este.
-//  * @param {String} code El cógigo que se recibe representa el id del producto a actualizar.
-//  * @returns {String} Retorna una cadena de texto en la que se indica la respuesta.
-//  */
+/**
+ * Método que sirve para actualizar los datos de un producto especifico
+ * @param {*} object Recibe los datos del producto a actualizar en un objeto json
+ * @returns Retorna un mensaje indicando el resultado obtenido
+ */
 
 const UpdateProduct = (object) => {
   return new Promise((resolve, reject) => {
@@ -215,6 +259,12 @@ const UpdateProduct = (object) => {
   });
 };
 
+/**
+ * Método que sirve para eliminar un producto de la base de datos
+ * @param {*} code Recibe el uid del producto a eliminar
+ * @returns Retorna un mensaje indicando el resultado obtenido
+ */
+
 const DeleteProduct = (code) => {
   return new Promise((resolve, reject) => {
     FindProducts().then((response) => {
@@ -239,6 +289,13 @@ const DeleteProduct = (code) => {
     });
   });
 };
+
+/**
+ * Método que sirve para actualizar la cantidad de un producto especifico
+ * @param {*} object Recibe los datos del producto al cual se le modificara la cantidad
+ * @param {*} quantity Recibe una cantidad de tipo number
+ * @returns Retorna el producto en un objeto json si se actualizo correctamente y null si no
+ */
 
 const UpdateProductQuantity = (object, quantity) => {
   return new Promise((resolve, reject) => {
@@ -271,6 +328,11 @@ const UpdateProductQuantity = (object, quantity) => {
   });
 };
 
+/**
+ * Método que sirve para obtener todos los productos publicados junto al usuario
+ * @returns Retorna un arreglo de productos junto al usuario que lo publico
+ */
+
 const FindAllProducts = () => {
   return new Promise((resolve, reject) => {
     const array = [];
@@ -292,6 +354,11 @@ const FindAllProducts = () => {
   });
 };
 
+/**
+ * Método que sirve para obtener los productos del usuario que inicio sesión
+ * @returns Retorna todos los productos publicados por el usuario actual
+ */
+
 const FindProducts = () => {
   return new Promise((resolve, reject) => {
     CurrentUser().then((user) => {
@@ -305,6 +372,12 @@ const FindProducts = () => {
     });
   });
 };
+
+/**
+ * Método que sirve para obtener todos los productos que empiecen con el nombre, para el comprador
+ * @param {*} name Recibe el nombre del producto a buscar
+ * @returns Retorna todos los productos que coinciden con el nombre unto al usuario
+ */
 
 const SearchAllProducts = (name) => {
   return new Promise((resolve, reject) => {
@@ -329,6 +402,12 @@ const SearchAllProducts = (name) => {
   });
 };
 
+/**
+ * Método que sirve para obtener todos los productos que empiecen con el nombre, para el vendedor
+ * @param {*} name Recibe el nombre del producto a buscar
+ * @returns Retorna todos los productos que coinciden con el nombre
+ */
+
 const SearchProducts = (name) => {
   return new Promise((resolve, reject) => {
     const array = [];
@@ -344,6 +423,12 @@ const SearchProducts = (name) => {
     });
   });
 };
+
+/**
+ * Método que sirve para filtrar por categoría, para el comprador
+ * @param {*} category Recibe la categoría del producto a filtrar
+ * @returns Retorna todos los productos que coinciden con la categoría
+ */
 
 const FilterAllProducts = (category) => {
   return new Promise((resolve, reject) => {
@@ -373,6 +458,12 @@ const FilterAllProducts = (category) => {
   });
 };
 
+/**
+ * Método que sirve para filtrar por categoría, para el vendedor
+ * @param {*} category Recibe la categoría del producto a filtrar
+ * @returns Retorna todos los productos que coinciden con la categoría
+ */
+
 const FilterProducts = (category) => {
   return new Promise((resolve, reject) => {
     const array = [];
@@ -388,6 +479,13 @@ const FilterProducts = (category) => {
     });
   });
 };
+
+/**
+ * Método que sirve para publicar fotos en storage de firebase
+ * @param {*} user Recibe el usuario que realiza la publicación
+ * @param {*} photos Recibe las fotos que desea publicar
+ * @returns Retorna un arreglo con las fotos publicadas si se subieron correctamente si no retirna error
+ */
 
 const CreateGallery = (user, photos) => {
   return new Promise((resolve, reject) => {
@@ -418,6 +516,12 @@ const CreateGallery = (user, photos) => {
   });
 };
 
+/**
+ * Método que sirve para registrar una compra realizada
+ * @param {*} object Recibe los datos de la compra, el comprador, el vendedor, el precio total y la cantidad en un objeto json
+ * @returns Retorna un mensaje indicando el resultado obtenido
+ */
+
 const CreatePurchase = (object) => {
   return new Promise((resolve, reject) => {
     CurrentUser().then((user) => {
@@ -445,6 +549,11 @@ const CreatePurchase = (object) => {
     });
   });
 };
+
+/**
+ * Método que sirve para obtener las compras registradas
+ * @returns Retorna las compras dependiendo del tipo de usuario que inicio sesión
+ */
 
 const ReadPurchases = () => {
   return new Promise((resolve, reject) => {
@@ -481,6 +590,12 @@ const ReadPurchases = () => {
   });
 };
 
+/**
+ * Método que sirve para calificar a un vendedor después de la compra
+ * @param {*} object Recibe el vendedor y la calificación en un objeto json
+ * @returns Retorna un mensaje indicando el resultado obtenido
+ */
+
 const ValorateSeller = (object) => {
   return new Promise((reject, resolve) => {
     CurrentUser().then((response) => {
@@ -500,6 +615,11 @@ const ValorateSeller = (object) => {
     });
   });
 };
+
+/**
+ * Método que sirve para obtener las calificaciónes registradas
+ * @returns Retorna las calificaciones realizadas al vendedor
+ */
 
 const ReadRatings = () => {
   return new Promise((resolve, reject) => {
@@ -521,40 +641,50 @@ const ReadRatings = () => {
   });
 };
 
+/**
+ * Método que sirve para conocer la calificación actual de un vendedor
+ * @param {*} user Recibe el usuario por el cual se consultara la calificación
+ * @returns Retorna la calificación como un mensaje
+ */
+
 const SearchRating = (user) => {
   return new Promise((resolve, reject) => {
     ratingReference.on('value', (response) => {
-      response.forEach((values) => {
-        if (values.key == user.uid) {
-          let totalRating = 0;
-          let accountant = 0;
+      if (response.exists()) {
+        response.forEach((values) => {
+          if (values.key == user.uid) {
+            let totalRating = 0;
+            let accountant = 0;
 
-          values.forEach((rating) => {
-            totalRating += rating.val().rating;
-            accountant++;
-          });
+            values.forEach((rating) => {
+              totalRating += rating.val().rating;
+              accountant++;
+            });
 
-          if (accountant > 5) {
-            switch (totalRating / accountant) {
-              case 1:
-                resolve('Muy Malas Calificaciónes');
-                break;
-              case 2:
-                resolve('Posee Malas Calificaciónes');
-                break;
-              case 3:
-                resolve('Es Un Vendedor Promedio');
-                break;
-              case 4:
-                resolve('Posee Buenas Calificaciónes');
-                break;
-              case 5:
-                resolve('Es Un Excelente Vendedor');
-                break;
-            }
-          } else resolve('Calificación Insuficiente');
-        } else resolve('Sin Calificación');
-      });
+            if (accountant > 5) {
+              switch (totalRating / accountant) {
+                case 1:
+                  resolve('Muy Malas Calificaciónes');
+                  break;
+                case 2:
+                  resolve('Posee Malas Calificaciónes');
+                  break;
+                case 3:
+                  resolve('Es Un Vendedor Promedio');
+                  break;
+                case 4:
+                  resolve('Posee Buenas Calificaciónes');
+                  break;
+                case 5:
+                  resolve('Es Un Excelente Vendedor');
+                  break;
+              }
+            } else resolve('Calificación Insuficiente');
+          } else resolve('Sin Calificación');
+        });
+      } else {
+        resolve('Sin Calificación');
+      }
     });
   });
 };

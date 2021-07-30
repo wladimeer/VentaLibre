@@ -5,6 +5,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import React, { useEffect, useState } from 'react';
 import Firebase from '../../../service/Firebase';
+import PriceFormat from 'price-text-format';
 import { Keyboard } from 'react-native';
 
 const { width, height } = Dimensions.get('screen');
@@ -99,7 +100,9 @@ const ViewProducts = ({ navigation }) => {
                       />
                     </View>
                     <View style={styles.labels}>
-                      <Text style={styles.textInitial}>${product.price}</Text>
+                      <Text style={styles.textInitial}>
+                        ${PriceFormat(product.price)}
+                      </Text>
                       <Text style={styles.textSecond}>{product.name}</Text>
                     </View>
                   </View>
@@ -135,7 +138,9 @@ const ViewProducts = ({ navigation }) => {
                       />
                     </View>
                     <View style={styles.labels}>
-                      <Text style={styles.textInitial}>${product.price}</Text>
+                      <Text style={styles.textInitial}>
+                        ${PriceFormat(product.price)}
+                      </Text>
                       <Text style={styles.textSecond}>{product.name}</Text>
                     </View>
                   </View>

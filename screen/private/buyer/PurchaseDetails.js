@@ -2,6 +2,7 @@ import { View, Text, Pressable, FlatList } from 'react-native';
 import { Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
 import { Image, Card, Divider } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import PriceFormat from 'price-text-format';
 import React from 'react';
 
 const { width, height } = Dimensions.get('screen');
@@ -89,11 +90,13 @@ const PurchaseDetails = ({ route, navigation }) => {
           </View>
           <View style={styles.textGroup}>
             <Text style={styles.textLabel}>Precio Unidad:</Text>
-            <Text style={styles.textValue}>${purchase.product.price}</Text>
+            <Text style={styles.textValue}>
+              ${PriceFormat(purchase.product.price)}
+            </Text>
           </View>
           <View style={styles.textGroup}>
             <Text style={styles.textLabel}>Precio Total:</Text>
-            <Text style={styles.textValue}>${purchase.totalPrice}</Text>
+            <Text style={styles.textValue}>${PriceFormat(purchase.totalPrice)}</Text>
           </View>
         </View>
         <View>

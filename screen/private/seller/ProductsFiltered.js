@@ -2,6 +2,7 @@ import { Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { ActivityIndicator, View, Text, Pressable } from 'react-native';
 import { Divider, Image, Card } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import PriceFormat from 'price-text-format';
 import React from 'react';
 
 const { width, height } = Dimensions.get('screen');
@@ -55,7 +56,9 @@ const ProductFiltered = ({ route, navigation }) => {
                       />
                     </View>
                     <View style={styles.labels}>
-                      <Text style={styles.textInitial}>${product.price}</Text>
+                      <Text style={styles.textInitial}>
+                        ${PriceFormat(product.price)}
+                      </Text>
                       <Text style={styles.textSecond}>{product.name}</Text>
                     </View>
                   </View>

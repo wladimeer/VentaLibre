@@ -4,6 +4,7 @@ import { Divider, Image, Card } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, { useEffect, useState } from 'react';
 import Firebase from '../../../service/Firebase';
+import PriceFormat from 'price-text-format';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -60,7 +61,9 @@ const ViewSales = ({ navigation }) => {
                       />
                     </View>
                     <View style={styles.labels}>
-                      <Text style={styles.textInitial}>${sales.totalPrice}</Text>
+                      <Text style={styles.textInitial}>
+                        ${PriceFormat(sales.totalPrice)}
+                      </Text>
                       <Text style={styles.textSecond}>{sales.product.name}</Text>
                     </View>
                   </View>

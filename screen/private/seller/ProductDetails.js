@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Firebase from '../../../service/Firebase';
 import React, { useRef, useState } from 'react';
 import AlertPro from 'react-native-alert-pro';
+import PriceFormat from 'price-text-format';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -74,7 +75,7 @@ const ProductDetails = ({ route, navigation }) => {
 
       <View style={styles.content}>
         <Text style={styles.textInitial}>{product.name}</Text>
-        <Text style={styles.textSecond}>${product.price}</Text>
+        <Text style={styles.textSecond}>${PriceFormat(product.price)}</Text>
       </View>
 
       <View style={{ marginVertical: 20 }}>

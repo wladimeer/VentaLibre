@@ -5,9 +5,14 @@ import PrincipalBuyer from './screen/private/buyer/PrincipalBuyer';
 import SignUpScreen from './screen/public/SignUpScreen';
 import SignInScreen from './screen/public/SignInScreen';
 import CreateScreen from './screen/public/CreateScreen';
+import SplashScreen from 'react-native-splash-screen';
 import React from 'react';
 
 const Stack = createStackNavigator();
+
+setTimeout(() => {
+  SplashScreen.hide();
+}, 1500);
 
 const AuthScreens = () => {
   return (

@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Divider } from 'react-native-elements';
+import PriceFormat from 'price-text-format';
 import React, { useState } from 'react';
 
 const QuantitySelection = ({ route, navigation }) => {
@@ -46,11 +47,11 @@ const QuantitySelection = ({ route, navigation }) => {
           </View>
           <View style={styles.textGroup}>
             <Text style={styles.textLabel}>Precio Unidad:</Text>
-            <Text style={styles.textValue}>${purchase.unityPrice}</Text>
+            <Text style={styles.textValue}>${PriceFormat(purchase.unityPrice)}</Text>
           </View>
           <View style={styles.textGroup}>
             <Text style={styles.textLabel}>Precio Total:</Text>
-            <Text style={styles.textValue}>${purchase.totalPrice}</Text>
+            <Text style={styles.textValue}>${PriceFormat(purchase.totalPrice)}</Text>
           </View>
         </View>
       </View>

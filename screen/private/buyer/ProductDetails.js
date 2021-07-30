@@ -33,7 +33,7 @@ const ProductDetails = ({ route, navigation }) => {
 
       <View style={styles.content}>
         <Text style={styles.textInitial}>{product.name}</Text>
-        <Text style={styles.textSecond}>${product.price}</Text>
+        <Text style={styles.textSecond}>${PriceFormat(product.price)}</Text>
       </View>
 
       <View style={{ marginVertical: 20 }}>
